@@ -1,29 +1,11 @@
-// import { Node, List } from './linkedlist.ts';
-// import { selectionSort } from './selectionsort.ts';
 import { sumTailRecursive, sumNormalRecursive } from './divide_and_conquer.ts';
 import { quickSort } from './quicksort.ts';
 import { selectionSort } from './selectionsort.ts';
 import { LinkedQueue, ArrayQueue } from './queue.ts';
 
-// const createNode = <T>(value: T) => new Node<T>(value);
-
-// const list = new List();
-
-// for (let i = 0; i <= 10; i++) {
-//     list.insert(createNode('todo ' + (i + 1)));
-// }
-
-// for (const todo of list.traverse()) {
-//     console.log('✔ ' + todo.value);
-// }
-
-// for (const todo of list.traverse()) {
-//     console.log('✔ ' + todo.value);
-// }
-
 const range = {
     start: 1,
-    *[Symbol.iterator](end: number = 900000000) {
+    *[Symbol.iterator](end: number = 90000) {
         let counter = this.start;
         while (counter !== end) {
             yield Math.floor(Math.random() * end);
@@ -33,23 +15,42 @@ const range = {
     },
 };
 
-// const sameArray1 = [...range];
-// const sameArray2 = [...sameArray1];
+const input1 = [...range];
+const input2 = [...input1];
 
-// console.time('Benchmark Quicksort');
-// console.log(quickSort(sameArray1));
-// console.timeEnd('Benchmark Quicksort');
+/**
+ * -----------------------------------------------
+ *  SORTING ALGORITHMS CHECK
+ * -----------------------------------------------
+ */
 
-// console.time('Benchmark Mergesort');
-// console.log(selectionSort(sameArray2));
-// console.timeEnd('Benchmark Mergesort');
+console.time('Benchmark Quicksort');
+console.log(quickSort(input1));
+console.timeEnd('Benchmark Quicksort');
 
-// console.time('Benchmark Normal');
-// console.log(sumNormalRecursive([...range]));
-// console.timeEnd('Benchmark Normal');
-// console.time('Benchmark Tail');
-// console.log(sumTailRecursive([...range]));
-// console.timeEnd('Benchmark Tail');
+console.time('Benchmark Mergesort');
+console.log(selectionSort(input2));
+console.timeEnd('Benchmark Mergesort');
+
+/**
+ * -----------------------------------------------
+ *  TAIL RECURSION IMPLEMENTATION CHECK
+ * -----------------------------------------------
+ */
+
+console.time('Benchmark Normal Recursion');
+sumNormalRecursive([...range[Symbol.iterator](7000)]);
+console.timeEnd('Benchmark Normal Recursion');
+
+console.time('Benchmark Tail Recursion check');
+sumTailRecursive([...range[Symbol.iterator](7000)]);
+console.timeEnd('Benchmark Tail Recursion check');
+
+/**
+ * ---------------------------------------------------
+ *  LinkedList vs Array IMPLEMENTATION CHECK for Queue
+ * ---------------------------------------------------
+ */
 
 console.time('Benchmark Linked');
 const linkedQueue = new LinkedQueue();
