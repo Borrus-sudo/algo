@@ -37,3 +37,7 @@ function hash(input: string, vocabLength: number) {
     }
     return hash;
 }
+
+function HelloWorld() {
+    console.log("Hello World!!!!")
+}

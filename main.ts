@@ -2,7 +2,7 @@ import { sumTailRecursive, sumNormalRecursive } from './divide_and_conquer.ts';
 import { quickSort } from './quicksort.ts';
 import { selectionSort } from './selectionsort.ts';
 import { LinkedQueue, ArrayQueue } from './queue.ts';
-import { search } from './rabbinKarp.ts';
+import { search } from './search/rabbinKarp.ts';
 
 const range = {
     start: 1,
