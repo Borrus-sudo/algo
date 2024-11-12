@@ -18,3 +18,5 @@ export function quickSort(arr: number[]): number[] {
     );
     return [...quickSort(less), ...same, ...quickSort(more)];
 }
+
+
