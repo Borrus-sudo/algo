@@ -3,6 +3,7 @@ import { quickSort } from './quicksort.ts';
 import { selectionSort } from './selectionsort.ts';
 import { LinkedQueue, ArrayQueue } from './queue.ts';
 import { search } from './search/rabbinKarp.ts';
+import { karperkar } from './karpekar.ts';
 
 const range = {
     start: 1,
@@ -158,3 +159,9 @@ console.timeEnd('Benchmark RabbitKarp');
 console.time('Benchmark Regex');
 console.log(inputString.match(/Christian/g)?.length);
 console.timeEnd('Benchmark Regex');
+
+
+console.log(karperkar(9))
+console.log(karperkar(297))
+console.log(karperkar(91))
+
