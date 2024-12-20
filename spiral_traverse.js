@@ -37,7 +37,7 @@ function spiral_print() {
         if (curr_pos.y + add_vec.y < 0) return false;
         if (
             visited.includes(
-                (curr_pos.x + add_vec.x) * (dim + 2) + curr_pos.y + add_vec.y
+                (curr_pos.x + add_vec.x) * (dim) + curr_pos.y + add_vec.y
             )
         )
             return false;
@@ -46,7 +46,7 @@ function spiral_print() {
     while (++counter <= dim) {
         if (within_limits()) {
             linear_order.push(matrix[curr_pos.x][curr_pos.y]);
-            visited.push(curr_pos.x * (dim + 2) + curr_pos.y);
+            visited.push(curr_pos.x * (dim) + curr_pos.y);
             curr_pos.add(add_vec);
         } else {
             add_vec.clockwise_rotation();
