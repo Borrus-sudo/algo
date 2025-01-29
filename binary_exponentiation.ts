@@ -2,10 +2,10 @@ export function binaryExponentiate(a: number, b: number): number {
     if (b === 0)
         return 1;
     if (b & 1) {
-        return binaryExponentiate(a, b / 2) ** 2;
+        return a * binaryExponentiate(a, b / 2) ** 2;
     }
     else
-        return a * (binaryExponentiate(a, Math.floor(b / 2)) ** 2)
+        return (binaryExponentiate(a, Math.floor(b / 2)) ** 2)
 }
 
 export function normalExponentiate(a: number, b: number): number {
