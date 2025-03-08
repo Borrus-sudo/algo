@@ -4,7 +4,6 @@
 #include <cmath>
 #include <string>
 #include <algorithm>
-#include <list>
 #define all(x) (x).begin, (x).end()
 using namespace std;
 
@@ -25,18 +24,24 @@ void smin(S &a, const T &b)
 using ll = long long;
 const int m = 1e9 + 7;
 
-void gen_strings(string gen, int idx, vector<string> &results)
+void gen_strings(int idx, string str, vector<string> &results)
 {
-    if (idx == gen.size())
+    if (idx >= str.size())
     {
-        results.push_back(gen);
+        results.push_back(str);
         return;
     }
-    for (int i = idx; i < gen.size(); i++)
+    for (int i = idx; i < str.size(); i++)
     {
-        swap(gen[idx], gen[i]);
-        gen_strings(gen, idx + 1, results);
-        swap(gen[idx], gen[i]);
+        string thisIter = str;
+        if (i == idx || str[i] != str[i - 1])
+        {
+            // perform rotation;
+            char c = thisIter[i];
+            thisIter.erase(i, 1);
+            thisIter.insert(idx, 1, c);
+            gen_strings(idx + 1, thisIter, results);
+        }
     }
 }
 
@@ -46,13 +51,11 @@ void solve()
     string s;
     cin >> s;
     sort(s.begin(), s.end());
-    vector<string> results;
-    gen_strings(s, 0, results);
+    vector<string> results = {};
+    gen_strings(0, s, results);
     cout << results.size() << endl;
-    for (string output : results)
-    {
-        cout << output << endl;
-    }
+    for (auto entry : results)
+        cout << entry << endl;
 }
 
 int main()
