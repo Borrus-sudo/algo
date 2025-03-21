@@ -12,10 +12,12 @@ struct Node
 template <typename T>
 class Stack
 {
-    Node *head = nullptr;
+    Node<T> *head = nullptr;
+
+public:
     void push(T val)
     {
-        Node *entry = new Node(val);
+        Node<T> *entry = new Node<T>(val);
         entry->prev = head;
         head = entry;
     }
@@ -23,7 +25,7 @@ class Stack
     {
         if (head != nullptr)
         {
-            Node *toDel = head;
+            Node<T> *toDel = head;
             head = head->prev;
             delete toDel;
         }
@@ -37,4 +39,10 @@ class Stack
     }
 };
 
-int main() {}
+int main()
+{
+    Stack<int> *s = new Stack<int>();
+    s->push(10);
+    s->push(20);
+    cout << s->peek();
+}

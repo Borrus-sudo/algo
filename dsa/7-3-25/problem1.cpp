@@ -4,7 +4,7 @@ using namespace std;
 template <typename T, int S>
 class Stack
 {
-    T arr[s];
+    T arr[S];
     int idx = 0;
 
 public:
@@ -29,5 +29,9 @@ public:
 
 int main()
 {
+    Stack<int, 10> s;
+    s.push(10);
+    s.push(20);
+    cout << s.peek();
     return 0;
 }
