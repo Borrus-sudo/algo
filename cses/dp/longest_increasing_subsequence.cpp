@@ -1,16 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <cmath>
 #include <string>
 #include <algorithm>
-#include <unordered_map>
-#include <map>
-#include <set>
-#include <unordered_set>
-
 #define all(x) (x).begin, (x).end()
-#define dbg(x) cout << "Line(" << __LINE__ << ") -> " << #x << " = " << (x) << endl;
-
 using namespace std;
 
 template <typename S, typename T>
@@ -32,7 +26,28 @@ const int m = 1e9 + 7;
 
 void solve()
 {
-    // write your code here
+    int n;
+    cin >> n;
+    vector<int> nums(n, 0);
+
+    for (int &num : nums)
+        cin >> num;
+
+    vector<int> dp(n, 1);
+    int ans = 0;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if (nums[i] > nums[j])
+            {
+                smax(dp[i], dp[j] + 1);
+            }
+        }
+        smax(ans, dp[i]);
+    }
+
+    cout << ans;
 }
 
 int main()

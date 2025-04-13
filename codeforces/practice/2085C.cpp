@@ -1,16 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <cmath>
 #include <string>
 #include <algorithm>
-#include <unordered_map>
-#include <map>
-#include <set>
-#include <unordered_set>
-
+#include <bitset>
 #define all(x) (x).begin, (x).end()
-#define dbg(x) cout << "Line(" << __LINE__ << ") -> " << #x << " = " << (x) << endl;
-
 using namespace std;
 
 template <typename S, typename T>
@@ -32,7 +27,21 @@ const int m = 1e9 + 7;
 
 void solve()
 {
-    // write your code here
+    ll a, b;
+    cin >> a;
+    cin >> b;
+    ll k1 = a & b;
+    cout << k1 << endl;
+    ll k2 = k1 >> 1;
+    cout << k2 << endl;
+    if ((a + b) == (a ^ b))
+        cout << 0 << endl;
+    else if ((a + b + 2 * k1) == ((a + k1) ^ (b + k1)))
+        cout << k1 << endl;
+    else if ((a + b + 2 * k2) == ((a + k2) ^ (b + k2)))
+        cout << k2 << endl;
+    else
+        cout << -1 << endl;
 }
 
 int main()
@@ -42,7 +51,7 @@ int main()
     cout.tie(nullptr);
 
     int TC = 1;
-    // cin >> TC;
+    cin >> TC;
 
     while (TC--)
         solve();

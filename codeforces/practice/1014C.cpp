@@ -32,7 +32,34 @@ const int m = 1e9 + 7;
 
 void solve()
 {
-    // write your code here
+    int n;
+    cin >> n;
+
+    ll res = 0;
+    int nOdds = 0;
+    int nEvens = 0;
+    int maxNum = INT_MIN;
+
+    while (n--)
+    {
+        int a;
+        cin >> a;
+        smax(maxNum, a);
+        if (a % 2 == 0)
+        {
+            res += a;
+            nEvens++;
+        }
+        else
+        {
+            nOdds++;
+            res += a;
+        }
+    }
+    if (nOdds && nEvens)
+        cout << (res - nOdds + 1) << endl;
+    else
+        cout << maxNum << endl;
 }
 
 int main()
@@ -42,7 +69,7 @@ int main()
     cout.tie(nullptr);
 
     int TC = 1;
-    // cin >> TC;
+    cin >> TC;
 
     while (TC--)
         solve();

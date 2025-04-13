@@ -12,7 +12,7 @@ export function sumNormalRecursive(arr: number[]): number {
     return arr[0] + sumNormalRecursive(arr.slice(1));
 }
 
-export function binarySearch(arr: number[]):number {
+export function binarySearch(arr: number[]): number {
     return 1;
 }
 
