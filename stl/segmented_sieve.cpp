@@ -72,8 +72,8 @@ void solve()
         int firstMultiple = (l / prime) * prime;
         if (firstMultiple < l)
             firstMultiple += prime;
-        for (int i = max(firstMultiple, prime * prime); i <= r; i += prime) {
-            
+        for (int i = max(firstMultiple, prime * prime); i <= r; i += prime)
+        {
         }
     }
 }
