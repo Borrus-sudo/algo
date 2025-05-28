@@ -69,7 +69,7 @@ void solve()
             {
                 char prevOp = st.top();
                 int prevPref = opPref(prevOp);
-                if (currPref > prevPref)
+                if (currPref >= prevPref)
                     break;
                 else
                 {
