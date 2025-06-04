@@ -32,33 +32,33 @@ const int m = 1e9 + 7;
 
 void solve()
 {
+    // write your code here
     int n;
     cin >> n;
-    // cout << res;
-    vector<int> nums(n, 0);
-    for (int &num : nums)
-        cin >> num;
-    int i = 0;
-    int res = 0;
-    set<int> win;
-    for (int j = 0; j < n; j++)
+    vector<int> towers(n, 0);
+    vector<int> bases;
+    while (n--)
     {
-        if (win.find(nums[j]) == win.end())
+        int cube;
+        cin >> cube;
+        if (!bases.size())
         {
-            win.insert(nums[j]);
-            smax(res, win.size());
+            bases.push_back(cube);
         }
         else
         {
-            while (i < n && nums[i] != nums[j])
+            auto pos = upper_bound(bases.begin(), bases.end(), cube);
+            if (pos == bases.end())
             {
-                win.erase(nums[i]);
-                i++;
+                bases.push_back(cube);
             }
-            i++;
+            else
+            {
+                *pos = cube;
+            }
         }
     }
-    cout << res;
+    cout << bases.size() << endl;
 }
 
 int main()

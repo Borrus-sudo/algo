@@ -34,31 +34,17 @@ void solve()
 {
     int n;
     cin >> n;
-    // cout << res;
-    vector<int> nums(n, 0);
-    for (int &num : nums)
-        cin >> num;
-    int i = 0;
-    int res = 0;
-    set<int> win;
-    for (int j = 0; j < n; j++)
+    vector<bool> visited(n + 1, false);
+    int rounds = 0;
+    while (n--)
     {
-        if (win.find(nums[j]) == win.end())
-        {
-            win.insert(nums[j]);
-            smax(res, win.size());
-        }
-        else
-        {
-            while (i < n && nums[i] != nums[j])
-            {
-                win.erase(nums[i]);
-                i++;
-            }
-            i++;
-        }
+        int num;
+        cin >> num;
+        visited[num] = true;
+        if (!visited[num - 1])
+            rounds++;
     }
-    cout << res;
+    cout << rounds;
 }
 
 int main()

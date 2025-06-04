@@ -34,31 +34,25 @@ void solve()
 {
     int n;
     cin >> n;
-    // cout << res;
-    vector<int> nums(n, 0);
-    for (int &num : nums)
-        cin >> num;
-    int i = 0;
-    int res = 0;
-    set<int> win;
-    for (int j = 0; j < n; j++)
+    vector<int> coins(n, 0);
+    for (int &coin : coins)
+        cin >> coin;
+    sort(coins.begin(), coins.end());
+    // now construct the table
+    ll sum = 0;
+    ll odd = 1;
+    for (int i = 0; i < n; i++)
     {
-        if (win.find(nums[j]) == win.end())
+        sum += coins[i];
+        if (sum > odd)
         {
-            win.insert(nums[j]);
-            smax(res, win.size());
+            cout << (odd - 1);
+            return;
         }
-        else
-        {
-            while (i < n && nums[i] != nums[j])
-            {
-                win.erase(nums[i]);
-                i++;
-            }
-            i++;
-        }
+        else if (sum == odd)
+            odd += 2;
     }
-    cout << res;
+    cout << odd;
 }
 
 int main()

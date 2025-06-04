@@ -32,33 +32,32 @@ const int m = 1e9 + 7;
 
 void solve()
 {
-    int n;
-    cin >> n;
-    // cout << res;
-    vector<int> nums(n, 0);
-    for (int &num : nums)
-        cin >> num;
-    int i = 0;
+    int n, m;
+    cin >> n >> m;
+    vector<int> posDB(n + 1, -1);
+    vector<int> list(n + 1, 0);
+    int pos = 1;
     int res = 0;
-    set<int> win;
-    for (int j = 0; j < n; j++)
+    while (n--)
     {
-        if (win.find(nums[j]) == win.end())
-        {
-            win.insert(nums[j]);
-            smax(res, win.size());
-        }
-        else
-        {
-            while (i < n && nums[i] != nums[j])
-            {
-                win.erase(nums[i]);
-                i++;
-            }
-            i++;
-        }
+        int elem;
+        cin >> elem;
+        posDB[elem] = pos;
+        list[pos] = elem;
+        if (posDB[elem - 1] == -1)
+            res++;
+        pos++;
     }
-    cout << res;
+    while (m--)
+    {
+        int a, b;
+        cin >> a >> b;
+        int num1 = list[a];
+        int num2 = list[b];
+        swap(list[a], list[b]);
+        swap(posDB[num1], posDB[num2]);
+        // if (posDB[num1 - 1] > posDB[num1] && posDB[])
+    }
 }
 
 int main()
