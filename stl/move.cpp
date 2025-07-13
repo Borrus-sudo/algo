@@ -32,5 +32,10 @@ int main()
     A a1;
     places.push_back(move(a1));
     places.push_back(A());
+
+    int a = 5;
+    int &&b = move(a);
+    cout << a << endl;
+
     return 0;
 }

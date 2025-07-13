@@ -29,7 +29,8 @@ public:
 
 int main()
 {
-    Stack<int, 10> s;
+    const int N = 10;
+    Stack<int, N> s;
     s.push(10);
     s.push(20);
     cout << s.peek();

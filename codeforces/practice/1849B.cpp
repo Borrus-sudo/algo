@@ -6,9 +6,10 @@
 #include <unordered_map>
 #include <map>
 #include <set>
+#include <queue>
 #include <unordered_set>
 
-#define all(x) (x).begin, (x).end()
+#define all(x) (x).begin(), (x).end()
 #define dbg(x) cout << "Line(" << __LINE__ << ") -> " << #x << " = " << (x) << endl;
 
 using namespace std;
@@ -32,31 +33,32 @@ const int m = 1e9 + 7;
 
 void solve()
 {
-    int n;
-    cin >> n;
-    // the one with the smallest second number index
-    vector<multiset<int>> matrix(n, multiset<int>());
-    ll min2_sum = 0;
-    ll min1_gl = LONG_MAX;
-    ll min2_gl = LONG_MAX;
+    int n, d;
+    cin >> n >> d;
+    vector<pair<int, int>> elems;
     for (int i = 0; i < n; i++)
     {
-        int size;
-        cin >> size;
         int elem;
-        while (size--)
-        {
-            cin >> elem;
-            matrix[i].insert(elem);
-        }
-        int min1 = *(matrix[i].begin());
-        int min2 = *next(matrix[i].begin());
-        smin(min1_gl, min1);
-        smin(min2_gl, min2);
-        min2_sum += min2;
+        cin >> elem;
+        elems.push_back({elem, i});
     }
-    ll res = min2_sum - min2_gl + min1_gl;
-    cout << res << endl;
+    sort(all(elems), [d](auto a, auto b)
+         { 
+        int dist1 = a.first % d;
+        int dist2 = b.first % d;
+        if (dist1 == dist2)
+            return a.second < b.second;
+        if (dist1 == 0)
+            return true;
+        if (dist2 == 0)
+            return false;
+          else
+            return dist1 > dist2; });
+
+    for (auto &[_, idx] : elems)
+        cout << (idx + 1) << " ";
+
+    cout << endl;
 }
 
 int main()
