@@ -6,9 +6,10 @@
 #include <unordered_map>
 #include <map>
 #include <set>
+#include <queue>
 #include <unordered_set>
 
-#define all(x) (x).begin, (x).end()
+#define all(x) (x).begin(), (x).end()
 #define dbg(x) cout << "Line(" << __LINE__ << ") -> " << #x << " = " << (x) << endl;
 
 using namespace std;
@@ -28,11 +29,11 @@ void smin(S &a, const T &b)
 };
 
 using ll = long long;
-const int m = 1e9 + 7;
+const int INF = 1e9 + 7;
 
 void solve()
 {
-    // write your code here
+    
 }
 
 int main()
@@ -42,7 +43,7 @@ int main()
     cout.tie(nullptr);
 
     int TC = 1;
-    // cin >> TC;
+    cin >> TC;
 
     while (TC--)
         solve();
