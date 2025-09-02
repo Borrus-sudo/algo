@@ -8,6 +8,7 @@
 #include <set>
 #include <queue>
 #include <unordered_set>
+#include <numeric>
 
 #define all(x) (x).begin(), (x).end()
 #define dbg(x) cout << "Line(" << __LINE__ << ") -> " << #x << " = " << (x) << endl;
