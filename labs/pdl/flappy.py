@@ -4,13 +4,14 @@ import sys
 
 # components
 
+
 class Velocity:
     def __init__(self, dx: int, dy: int):
         self.dx = dx
         self.dy = dy
 
 
-class Movement:
+class Dimensions:
     def __init__(self, x: int, y: int, width: int, height: int):
         self.x = x
         self.y = y
@@ -52,28 +53,40 @@ class Screen:
 SCREENW = 150
 SCREENH = 35
 STARTX = 20
-STARTY = 10
+STARTY = 7
 
 
 # systems
-def physics(locs: list[Movement]):
+def physics(locs: list[Dimensions]):
     # check for out-of-bounds, collision and user input
     # I know that the collision can only occur between bird and pipes, so we can exploit that
     # Once something goes out of screen, we put it just outside the edge of the screen from the other side
     # We exploit that fact that pipes never collide and their equi-spacing and equi-speed to our fullest advantage
-    birdLoc = locs[0]
-    for loc in locs[1:]:
-        # check for collision!
-        pass
+    def isColliding(box1: Dimensions, box2: Dimensions):
+        # how to take input properly?
+        if (
+            box1.x <= box2.x + box2.width
+            and box1.x + box1.width >= box2.x
+            and box1.y <= box2.y + box2.height
+            and box1.y + box1.height >= box2.y
+        ):
+            print("\033[H\033[J", end="", flush=True)
+            print("Game over :(")  # introduce a make the Scene component more capable?
+            exit()
+
+    birdLoc = locs[1]
+    for loc in locs[2:]:
+        isColliding(birdLoc, loc)
+
     # out of screen check
     # defo takes advantage of the structure of the game
     for loc in locs[1:]:
         if loc.x + loc.width < STARTX:
             # well now I know this is for sure outta the screen
-            loc.x = SCREENW
+            loc.x = SCREENW + 25
 
 
-def render(meshes: list[Mesh], locs: list[Movement], Screen: Screen):
+def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
 
     print(
         "\033[H\033[J", end="", flush=True
@@ -111,7 +124,7 @@ def render(meshes: list[Mesh], locs: list[Movement], Screen: Screen):
     sys.stdout.flush()
 
 
-def update(loc: list[Movement], vels: list[Velocity]):
+def update(loc: list[Dimensions], vels: list[Velocity]):
     for item, vel in zip(loc, vels):
         item.x += vel.dx
         item.y += vel.dy
@@ -119,7 +132,7 @@ def update(loc: list[Movement], vels: list[Velocity]):
 
 # entities
 
-loc: list[Movement] = []
+loc: list[Dimensions] = []
 mesh: list[Mesh] = []
 vel: list[Velocity] = []
 screen = Screen(STARTX, STARTY, SCREENW, SCREENH)
@@ -129,6 +142,11 @@ screen = Screen(STARTX, STARTY, SCREENW, SCREENH)
 
 
 def init():
+    # bounding box
+    loc.append(Dimensions(STARTX, STARTY, SCREENW, SCREENH))
+    mesh.append(Mesh(SCREENW, SCREENH))
+    vel.append(Velocity(0, 0))
+
     # one bird
     BIRDH = 3
     BIRDW = 10
@@ -136,7 +154,7 @@ def init():
     BIRDY = STARTY + int(SCREENH / 2) - int(BIRDH / 2)
     BIRDDX = 0
     BIRDDY = 2
-    loc.append(Movement(BIRDX, BIRDY, BIRDW, BIRDH))
+    loc.append(Dimensions(BIRDX, BIRDY, BIRDW, BIRDH))
     mesh.append(Mesh(BIRDW, BIRDH))
     vel.append(Velocity(BIRDDX, BIRDDY))
 
@@ -153,17 +171,17 @@ def init():
     MAXPIPEH = int(totalHeight * 3 / 4)
     PIPEW = 20
 
-    for _ in range(10):
+    for _ in range(4):
 
         # pipe1 + pipe2 = totalHeight
         PIPE1H = random.randint(MINPIPEH, MAXPIPEH)
         PIPE2H = totalHeight - PIPE1H
 
-        loc.append(Movement(PIPEX, PIPEY, PIPEW, PIPE1H))
+        loc.append(Dimensions(PIPEX, PIPEY, PIPEW, PIPE1H))
         mesh.append(Mesh(PIPEW, PIPE1H))
         vel.append(Velocity(PIPEDX, PIPEDY))
 
-        loc.append(Movement(PIPEX, PIPEY + PIPE1H + safeSpace, PIPEW, PIPE2H))
+        loc.append(Dimensions(PIPEX, PIPEY + PIPE1H + safeSpace, PIPEW, PIPE2H))
         mesh.append(Mesh(PIPEW, PIPE2H))
         vel.append(Velocity(PIPEDX, PIPEDY))
 
@@ -175,8 +193,9 @@ def loop(fps):
     idx = 0
     while True:
         if idx == 0:
-            render(mesh, loc, screen)
+            physics(loc)
             update(loc, vel)
+            render(mesh, loc, screen)
         idx += 1
         idx %= fps
 
