@@ -168,13 +168,13 @@ def init():
     mesh.append(Mesh(BIRDW, BIRDH))
     vel.append(Velocity(BIRDDX, BIRDDY))
 
-    PIPEX = STARTX + 20  # offset
+    PIPEX = STARTX + 25  # offset
     PIPEY = STARTY
 
     PIPEDX = -5
     PIPEDY = 0
 
-    safeSpace = BIRDH + 10
+    safeSpace = BIRDH + 15
     totalHeight = SCREENH - safeSpace
     MINPIPEH = int(totalHeight / 4)
     MAXPIPEH = int(totalHeight * 3 / 4)
@@ -211,4 +211,4 @@ def loop(fps):
 
 if __name__ == "__main__":
     init()
-    loop(3000000)
+    loop(2500000)
