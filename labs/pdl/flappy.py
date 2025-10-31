@@ -1,6 +1,7 @@
 import random
 import sys
-
+import msvcrt
+import time
 
 # components
 
@@ -83,7 +84,7 @@ def physics(locs: list[Dimensions]):
     for loc in locs[1:]:
         if loc.x + loc.width < STARTX:
             # well now I know this is for sure outta the screen
-            loc.x = SCREENW + 25
+            loc.x = SCREENW + 40
 
 
 def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
@@ -106,9 +107,11 @@ def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
                     and tY >= screen.startY
                     and tY < screen.startY + screen.height
                 ):
-                    Screen.canvas[loc.y + y - screen.startY][
-                        loc.x + x - screen.startX
-                    ] = mesh.fetchLexeme(x, y)
+                    output = mesh.fetchLexeme(x, y)
+                    if output != " ":
+                        Screen.canvas[loc.y + y - screen.startY][
+                            loc.x + x - screen.startX
+                        ] = output
 
     offset = "\n" * Screen.startY
     print(offset)
@@ -128,6 +131,13 @@ def update(loc: list[Dimensions], vels: list[Velocity]):
     for item, vel in zip(loc, vels):
         item.x += vel.dx
         item.y += vel.dy
+
+
+# key logging system
+def key_press(bird: Dimensions):
+    if msvcrt.kbhit():
+        msvcrt.getch()
+        bird.y -= 4 # to account for the gravity
 
 
 # entities
@@ -158,7 +168,6 @@ def init():
     mesh.append(Mesh(BIRDW, BIRDH))
     vel.append(Velocity(BIRDDX, BIRDDY))
 
-    # create 20 pipes, 2 each on a x
     PIPEX = STARTX + 20  # offset
     PIPEY = STARTY
 
@@ -169,11 +178,11 @@ def init():
     totalHeight = SCREENH - safeSpace
     MINPIPEH = int(totalHeight / 4)
     MAXPIPEH = int(totalHeight * 3 / 4)
-    PIPEW = 20
+    PIPEW = 15
 
-    for _ in range(4):
+    for _ in range(5):
 
-        # pipe1 + pipe2 = totalHeight
+        # PIPE1H + PIPE2H = totalHeight
         PIPE1H = random.randint(MINPIPEH, MAXPIPEH)
         PIPE2H = totalHeight - PIPE1H
 
@@ -189,10 +198,10 @@ def init():
 
 
 def loop(fps):
-    # after every sometime you know?
     idx = 0
     while True:
         if idx == 0:
+            key_press(loc[1])
             physics(loc)
             update(loc, vel)
             render(mesh, loc, screen)
@@ -202,4 +211,4 @@ def loop(fps):
 
 if __name__ == "__main__":
     init()
-    loop(4000000)
+    loop(3000000)
