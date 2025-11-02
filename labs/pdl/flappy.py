@@ -32,7 +32,53 @@ class Mesh:
         elif x == 0 or x == self.width - 1:
             return "|"
         else:
-            return " "
+            return "\033[44m \033[0m"
+
+
+class Pipe(Mesh):
+
+    def __init__(self, width: int, height: int):
+        super().__init__(width, height)
+
+    def fetchLexeme(self, x: int, y: int) -> str:
+        # very hacky
+        if y == 0 or y == self.height - 1:
+            return "="
+        elif x == 0 or x == self.width - 1:
+            return "|"
+        else:
+            return "\033[42m \033[0m"
+
+
+class Bird(Mesh):
+    frames: list[list[list[str]]] = [
+        [
+            [" ", " ", " ", "_", " ", " ", " "],
+            ["_", "_", "(", ".", ")", "<", " "],
+            ["\\", "_", "_", "_", ")", " ", " "],
+        ],
+        [
+            [" ", " ", " ", "-", " ", " ", " "],
+            ["_", "_", "(", ".", ")", "/", "<"],
+            ["\\", "-", "\\", "_", ")", " ", " "],
+        ],
+    ]
+    curr = 1
+
+    ## 33 m
+    def __init__(self):
+        super().__init__(len(self.frames[0][0]), len(self.frames[0]))
+
+    # works assuming that the whole frame is re-rendered every time
+    def fetchLexeme(self, x: int, y: int) -> str:
+        if x == 0 and y == 0:
+            self.curr += 1
+            self.curr %= 2
+        lexeme = self.frames[self.curr][y][x]
+        if lexeme == " ":
+            return f"\033[44m{lexeme}\033[0m"
+        else:
+            return f"\033[43m{lexeme}\033[0m"
 
 
 class Screen:
@@ -52,8 +98,8 @@ class Screen:
 
 SCREENW = 120
 SCREENH = 35
-STARTX = 40
-STARTY = 7
+STARTX = 50
+STARTY = 5
 SCORE = 0.0  # prolly not the right way to do it
 
 
@@ -68,26 +114,29 @@ def physics(locs: list[Dimensions]):
         if (
             box1.x <= box2.x + box2.width
             and box1.x + box1.width >= box2.x
-            and box1.y <= box2.y + box2.height
-            and box1.y + box1.height >= box2.y
+            and box1.y <= box2.y + box2.height - 1
+            and box1.y + box1.height - 1 >= box2.y
         ):
-            print("\033[H\033[J", end="", flush=True)
-            print("Game over :(")  # introduce a make the Scene component more capable?
+            # print("\033[H\033[J", end="", flush=True)
+            print(
+                " " * STARTX, "Game over :("
+            )  # introduce a make the Scene component more capable?
+            print(" " * STARTX, "Your final score was ", SCORE)
             exit()
 
     birdLoc = locs[1]
-    global SCORE
     for loc in locs[2:]:
         isColliding(birdLoc, loc)
-        if loc.x + loc.width < birdLoc.x:
-            SCORE += 0.5
 
     # out of screen check
     # defo takes advantage of the structure of the game
+
+    global SCORE
     for loc in locs[1:]:
         if loc.x + loc.width < STARTX:
             # well now I know this is for sure outta the screen
-            loc.x = SCREENW + 50
+            SCORE += 0.5
+            loc.x = SCREENW + 60
 
 
 def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
@@ -119,7 +168,7 @@ def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
 
     # write code to limit in case the screen width exceeds the terminal width?
     print(output)
-    print(f"\033[1mSCORE\033[0m: {SCORE}", flush=True)
+    print(" " * STARTX, "\033[1mYOUR SCORE\033[0m", SCORE)  # f"\033[1m{lexeme}\033[0m"
     print("\n")
     for row in range(len(Screen.canvas)):
         line = " " * Screen.startX + "".join(Screen.canvas[row])
@@ -170,13 +219,13 @@ def init():
 
     # one bird
     BIRDH = 3
-    BIRDW = 10
+    BIRDW = 7
     BIRDX = STARTX + 5  # 10 is the offset
     BIRDY = STARTY + int(SCREENH / 2) - int(BIRDH / 2)
     BIRDDX = 0
     BIRDDY = 2
     loc.append(Dimensions(BIRDX, BIRDY, BIRDW, BIRDH))
-    mesh.append(Mesh(BIRDW, BIRDH))
+    mesh.append(Bird())
     vel.append(Velocity(BIRDDX, BIRDDY))
 
     PIPEX = STARTX + 40  # offset
@@ -198,11 +247,11 @@ def init():
         PIPE2H = totalHeight - PIPE1H
 
         loc.append(Dimensions(PIPEX, PIPEY, PIPEW, PIPE1H))
-        mesh.append(Mesh(PIPEW, PIPE1H))
+        mesh.append(Pipe(PIPEW, PIPE1H))
         vel.append(Velocity(PIPEDX, PIPEDY))
 
         loc.append(Dimensions(PIPEX, PIPEY + PIPE1H + safeSpace, PIPEW, PIPE2H))
-        mesh.append(Mesh(PIPEW, PIPE2H))
+        mesh.append(Pipe(PIPEW, PIPE2H))
         vel.append(Velocity(PIPEDX, PIPEDY))
 
         PIPEX += PIPEW + 25
@@ -224,24 +273,24 @@ def loop(fps):
 if __name__ == "__main__":
     init()
     startScreen = """
-                                     ________  __                                                _______   __                  __ 
-                                     |        \\|  \\                                              |       \\ |  \\                |  \\
-                                     | $$$$$$$$| $$  ______    ______    ______   __    __       | $$$$$$$\\ \\$$  ______    ____| $$
-                                     | $$__    | $$ |      \\  /      \\  /      \\ |  \\  |  \\      | $$__/ $$|  \\ /      \\  /      $$
-                                     | $$  \\   | $$  \\$$$$$$\\|  $$$$$$\\|  $$$$$$\\| $$  | $$      | $$    $$| $$|  $$$$$$\\|  $$$$$$$
-                                     | $$$$$   | $$ /      $$| $$  | $$| $$  | $$| $$  | $$      | $$$$$$$\\| $$| $$   \\$$| $$  | $$
-                                     | $$      | $$|  $$$$$$$| $$__/ $$| $$__/ $$| $$__/ $$      | $$__/ $$| $$| $$      | $$__| $$
-                                     | $$      | $$ \\$$    $$| $$    $$| $$    $$ \\$$    $$      | $$    $$| $$| $$       \\$$    $$
-                                      \\$$       \\$$  \\$$$$$$$| $$$$$$$ | $$$$$$$  _\\$$$$$$$       \\$$$$$$$  \\$$ \\$$        \\$$$$$$$
-                                                             | $$      | $$      |  \\__| $$                                        
-                                                             | $$      | $$       \\$$    $$                                        
-                                                              \\$$       \\$$        \\$$$$$$                                         
+                                                            ________  __                                                _______   __                  __ 
+                                                            |        \\|  \\                                              |       \\ |  \\                |  \\
+                                                            | $$$$$$$$| $$  ______    ______    ______   __    __       | $$$$$$$\\ \\$$  ______    ____| $$
+                                                            | $$__    | $$ |      \\  /      \\  /      \\ |  \\  |  \\      | $$__/ $$|  \\ /      \\  /      $$
+                                                            | $$  \\   | $$  \\$$$$$$\\|  $$$$$$\\|  $$$$$$\\| $$  | $$      | $$    $$| $$|  $$$$$$\\|  $$$$$$$
+                                                            | $$$$$   | $$ /      $$| $$  | $$| $$  | $$| $$  | $$      | $$$$$$$\\| $$| $$   \\$$| $$  | $$
+                                                            | $$      | $$|  $$$$$$$| $$__/ $$| $$__/ $$| $$__/ $$      | $$__/ $$| $$| $$      | $$__| $$
+                                                            | $$      | $$ \\$$    $$| $$    $$| $$    $$ \\$$    $$      | $$    $$| $$| $$       \\$$    $$
+                                                             \\$$       \\$$  \\$$$$$$$| $$$$$$$ | $$$$$$$  _\\$$$$$$$       \\$$$$$$$  \\$$ \\$$        \\$$$$$$$
+                                                                                    | $$      | $$      |  \\__| $$                                        
+                                                                                    | $$      | $$       \\$$    $$                                        
+                                                                                     \\$$       \\$$        \\$$$$$$                                         
     """
     print("\033[H\033[J", end="", flush=True)
     print("\n" * STARTY)
     print(startScreen)
     print("\n" * 2)
-    print((" " * 60) + "Press any key to start playing!")
+    print((" " * 90) + "Press any key to start playing!")
     while True:
         if was_pressed():
             break
