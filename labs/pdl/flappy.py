@@ -1,7 +1,6 @@
 import random
 import sys
 import msvcrt
-import time
 
 # components
 
@@ -28,10 +27,10 @@ class Mesh:
 
     def fetchLexeme(self, x: int, y: int) -> str:
         # very hacky
-        if x == 0 or x == self.width - 1:
-            return "+"
-        elif y == 0 or y == self.height - 1:
-            return "-"
+        if y == 0 or y == self.height - 1:
+            return "="
+        elif x == 0 or x == self.width - 1:
+            return "|"
         else:
             return " "
 
@@ -51,10 +50,11 @@ class Screen:
 
 # screen constants
 
-SCREENW = 150
+SCREENW = 120
 SCREENH = 35
-STARTX = 20
+STARTX = 40
 STARTY = 7
+SCORE = 0.0  # prolly not the right way to do it
 
 
 # systems
@@ -76,23 +76,25 @@ def physics(locs: list[Dimensions]):
             exit()
 
     birdLoc = locs[1]
+    global SCORE
     for loc in locs[2:]:
         isColliding(birdLoc, loc)
+        if loc.x + loc.width < birdLoc.x:
+            SCORE += 0.5
 
     # out of screen check
     # defo takes advantage of the structure of the game
     for loc in locs[1:]:
         if loc.x + loc.width < STARTX:
             # well now I know this is for sure outta the screen
-            loc.x = SCREENW + 40
+            loc.x = SCREENW + 50
 
 
 def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
 
     print(
-        "\033[H\033[J", end="", flush=True
+        "\033[H\033[J", end=""
     )  # ANSI code for clearing the screen and taking the cursor to the top left
-
     for mesh, loc in zip(meshes, locs):
         # only if something is within the screen?
         # as soon as something goes out of the screen completely (that is a pipe basically), we need to give it new coords
@@ -113,18 +115,20 @@ def render(meshes: list[Mesh], locs: list[Dimensions], Screen: Screen):
                             loc.x + x - screen.startX
                         ] = output
 
-    offset = "\n" * Screen.startY
-    print(offset)
+    output = "\n" * Screen.startY
 
     # write code to limit in case the screen width exceeds the terminal width?
+    print(output)
+    print(f"\033[1mSCORE\033[0m: {SCORE}", flush=True)
+    print("\n")
     for row in range(len(Screen.canvas)):
-        line = " " * Screen.startX
-        for col in range(len(Screen.canvas[0])):
-            line += Screen.canvas[row][col]
-            Screen.canvas[row][col] = " "  # blanking the canvas for the next render
-        print(line, flush=False)  # keep buffering till it is asked to
-
+        line = " " * Screen.startX + "".join(Screen.canvas[row])
+        sys.stdout.write(line + "\n")
     sys.stdout.flush()
+
+    for row in range(len(Screen.canvas)):
+        for col in range(len(Screen.canvas[0])):
+            Screen.canvas[row][col] = " "  # blanking the canvas for the next render
 
 
 def update(loc: list[Dimensions], vels: list[Velocity]):
@@ -137,7 +141,14 @@ def update(loc: list[Dimensions], vels: list[Velocity]):
 def key_press(bird: Dimensions):
     if msvcrt.kbhit():
         msvcrt.getch()
-        bird.y -= 4 # to account for the gravity
+        bird.y -= 5  # to account for the gravity
+
+
+def was_pressed():
+    if msvcrt.kbhit():
+        msvcrt.getch()
+        return True
+    return False
 
 
 # entities
@@ -168,19 +179,19 @@ def init():
     mesh.append(Mesh(BIRDW, BIRDH))
     vel.append(Velocity(BIRDDX, BIRDDY))
 
-    PIPEX = STARTX + 25  # offset
+    PIPEX = STARTX + 40  # offset
     PIPEY = STARTY
 
     PIPEDX = -5
     PIPEDY = 0
 
-    safeSpace = BIRDH + 15
+    safeSpace = BIRDH + 10
     totalHeight = SCREENH - safeSpace
     MINPIPEH = int(totalHeight / 4)
     MAXPIPEH = int(totalHeight * 3 / 4)
     PIPEW = 15
 
-    for _ in range(5):
+    for _ in range(4):
 
         # PIPE1H + PIPE2H = totalHeight
         PIPE1H = random.randint(MINPIPEH, MAXPIPEH)
@@ -201,8 +212,9 @@ def loop(fps):
     idx = 0
     while True:
         if idx == 0:
-            key_press(loc[1])
+            # the order of these functions very important!
             physics(loc)
+            key_press(loc[1])
             update(loc, vel)
             render(mesh, loc, screen)
         idx += 1
@@ -211,4 +223,26 @@ def loop(fps):
 
 if __name__ == "__main__":
     init()
-    loop(2500000)
+    startScreen = """
+                                     ________  __                                                _______   __                  __ 
+                                     |        \\|  \\                                              |       \\ |  \\                |  \\
+                                     | $$$$$$$$| $$  ______    ______    ______   __    __       | $$$$$$$\\ \\$$  ______    ____| $$
+                                     | $$__    | $$ |      \\  /      \\  /      \\ |  \\  |  \\      | $$__/ $$|  \\ /      \\  /      $$
+                                     | $$  \\   | $$  \\$$$$$$\\|  $$$$$$\\|  $$$$$$\\| $$  | $$      | $$    $$| $$|  $$$$$$\\|  $$$$$$$
+                                     | $$$$$   | $$ /      $$| $$  | $$| $$  | $$| $$  | $$      | $$$$$$$\\| $$| $$   \\$$| $$  | $$
+                                     | $$      | $$|  $$$$$$$| $$__/ $$| $$__/ $$| $$__/ $$      | $$__/ $$| $$| $$      | $$__| $$
+                                     | $$      | $$ \\$$    $$| $$    $$| $$    $$ \\$$    $$      | $$    $$| $$| $$       \\$$    $$
+                                      \\$$       \\$$  \\$$$$$$$| $$$$$$$ | $$$$$$$  _\\$$$$$$$       \\$$$$$$$  \\$$ \\$$        \\$$$$$$$
+                                                             | $$      | $$      |  \\__| $$                                        
+                                                             | $$      | $$       \\$$    $$                                        
+                                                              \\$$       \\$$        \\$$$$$$                                         
+    """
+    print("\033[H\033[J", end="", flush=True)
+    print("\n" * STARTY)
+    print(startScreen)
+    print("\n" * 2)
+    print((" " * 60) + "Press any key to start playing!")
+    while True:
+        if was_pressed():
+            break
+    loop(3500000)
