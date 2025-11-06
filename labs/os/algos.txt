@@ -1,0 +1,134 @@
+Co-operating processes
+
+Shared Memory
+
+in = 0
+while ((in + 1) % BUFFER_SIZE == out);
+buffer[in] = PRODUCE
+in = (in + 1) % BUFFER_SIZE
+
+out = 0
+while (in == out);
+buffer[out] = CONSUME
+out = (out + 1) % BUFFER_SIZE
+
+We only use BUFFER_SIZE - 1
+
+Thus we use counter variable
+
+counter = 0
+in = 0
+while (counter == BUFFER_SIZE);
+buffer[in] = PRODUCE
+in = (in + 1) % BUFFER_SIZE
+counter++;
+
+while (counter == 0);
+buffer[out] = CONSUME
+out = (out + 1) % BUFFER_SIZE
+counter--
+
+This causes a critical section problem
+
+
+
+Bounded Buffer Using Semaphores
+Semaphore empty = 0 // full slots
+Semaphore full = N // empty slots
+Semaphore lock = 1
+
+// PRODUCER code
+full.wait();
+lock.wait()
+// PRODUCE
+lock.signal();
+empty.signal();
+
+
+// CONSUMER code
+empty.wait();
+lock.wait();
+// CONSUME
+lock.signal();
+full.signal();
+
+
+Flag Variable 
+bool flags[] = {false, false};
+
+flags[i] = true;
+while (flags[1 - i]);
+// critical
+flags[i] = false;
+
+
+
+Turn Variable
+int turn = 0;
+
+turn = i;
+while (turn == 1 - i);
+// critical section
+turn = 1 - i;
+// Strict alternation, progress it hampered
+
+
+Peterson: Hybird of flag and turn
+flags[i] = true;
+turn = 1 - i;
+while (flags[1 - i] && turn == 1 - i);
+// critiacl section
+flags[i] = false;
+
+
+Deckers
+flags[0] = true;
+while (flags[1]) {
+    if (turn != 0) {
+        flags[0] = false;
+        while (turn != 0);
+        flags[0] = true;
+    }
+}
+// critical section
+turn = 1;
+flags[0] = false;
+
+
+Dining Philosopher's Problem
+enum {THINKING, HUNGRY, EATING} state[5];
+
+
+
+
+
+Reader Writer Problems
+Semaphore rw_mutex = 1
+Semaphore mutex = 1
+
+// Reader's codem
+mutex.wait();
+if (count == 1)
+    rw_mutex.wait();
+mutex.signal();
+
+mutex.wait();
+count--;
+if (count == 0)
+    rw_mutex.signal();
+mutex.signal();
+
+// Writer's code
+do {
+rw_mutex.wait();
+rw_mutex.signal();
+} while(true).
+
+
+
+
+Sleeping Barber Problem
+
+Banker's algorithm
+
+Resource Allocation Graph algorithm
