@@ -1,0 +1,54 @@
+things i wanna achieve: range based and template based programming in C++
+
+What is my goal?
+    - Create a nice api to get shit done
+    - Maybe creating a fancy dbg macro along the way
+    - Allow for some constructs that make C++ feel more declarative.
+    - Make sure the additional code is not that long 
+
+something like 
+
+3 main parts:
+-> inp and data-structure intialization
+-> itertation, some, all constructs easier, sentinel values, out-of-bounds, making ranges easier all together
+-> easy api make-over for doing string manip, vector/list ops
+-> print statements and dbg statements support 
+
+what is so tough in iteration? the prev, next, curr
+If I could easily get this then so cool man!!!!
+
+-> A data structure that is int but modded under-the-hood
+Treat all ranges like [start, end)
+4 fundamental operations on -> list(int, ll)
+                            -> string
+    -> Access -> prev, curr, next
+    -> Search -> binary_search, linear_search
+    -> Insert -> insert at a position and specify the end
+    -> Delete -> same as delete but just does not provide the subordinate stuff
+Other support is gonna for be iterations.
+    -> Should be easy to make any sort of iteration (evenIndices, oddIndices) (loop)
+    -> Support for map, filter, reduce, some, all?
+    -> Support for smin, smax, len?
+    -> print statements
+    -> dbg statements
+    -> dyanmic bounds uptill and dynamic windows (How to group together similar valued stuff)
+-> easy way for bitsets and easy way to get prefix sums
+
+    
+
+inp(n)
+inp<int(n)>(nums)
+bool has = some(nums, 1);
+bool has = some(nums, (auto a) {
+})
+Figuring out the substring, subarray
+
+I want a for that gives me the idx and the element both together
+Maybe make sentinel values easy
+The goal for iterat
+for(nums, idx, elem) {
+    
+}
+
+I want to make print certainly easier and also wanna be able to like easily return the function
+
