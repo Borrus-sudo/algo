@@ -36,7 +36,7 @@ using vvll = vec<vll>;
 const int INF = 1e9 + 7;
 
 template <typename T, typename... Types>
-void input(T first, Types... args) {
+void input(T& first, Types... args) {
     if constexpr (is_same<T, pi>::value || is_same<T, pll>::value) {
         cin >> first.first;
         cin >> first.second;
@@ -165,6 +165,7 @@ void solve() {
 
 int main() {
     int(TC);
+    print(TC);
     while (TC--)
         solve();
     return 0;
