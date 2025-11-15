@@ -21,7 +21,7 @@ class Semaphore {
     // must be atomic ofc
     void signal() {
         counter++;
-        if (counter <= 0) {
+        if (counter >= 0) {
             // we gotta put one slept thread back to life
         }
     };
