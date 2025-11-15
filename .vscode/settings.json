@@ -1,13 +1,17 @@
 {
-    "files.associations": {
-        "utility": "cpp",
-        "format": "cpp",
-        "initializer_list": "cpp",
-        "list": "cpp",
-        "vector": "cpp",
-        "xhash": "cpp",
-        "xstring": "cpp",
-        "ios": "cpp",
-        "xiosbase": "cpp"
+    "maptz.regionfolder": {
+        "[cpp]": {
+            // --- Folding Text ---
+            "foldStart": "#pragma region [NAME]",
+            "foldEnd": "#pragma endregion",
+
+            // --- Regex to detect regions in code ---
+            "foldStartRegex": "#pragma\\s+region\\s*(.*)",
+            "foldEndRegex": "#pragma\\s+endregion",
+
+            // --- OPTIONAL: Automatically collapse these regions ---
+            "defaultFoldStartRegex": "#pragma\\s+region\\s*(.*)",
+            "collapseDefaultRegionsOnOpen": true
+        }
     }
 }

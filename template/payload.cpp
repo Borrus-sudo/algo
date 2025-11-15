@@ -36,41 +36,42 @@ using vvll = vec<vll>;
 const int INF = 1e9 + 7;
 
 template <typename T, typename... Types>
-void input(T& first, Types... args) {
+void in(T& first, Types... args) {
     if constexpr (is_same<T, pi>::value || is_same<T, pll>::value) {
-        cin >> first.first;
-        cin >> first.second;
-    } else if constexpr (is_same<T, vi>::value || is_same<T, vll>::value) {
+        in(first.first);
+        in(first.second);
+    } else if constexpr (is_same<T, vi>::value || is_same<T, vll>::value ||
+                         is_same<T, vvi>::value || is_same<T, vll>::value) {
         for (int i = 0; i < first.size(); i++) {
-            cin >> first[i];
+            in(first[i]);
         }
     } else {
         cin >> first;
     }
     if constexpr (sizeof...(args) > 0) {
-        input(args...);
+        in(args...);
     }
 }
 
 template <typename T, typename... Types>
-void print(T first, Types... args) {
+void out(T first, Types... args) {
     if constexpr (is_same<T, pi>::value || is_same<T, pll>::value) {
-        cout << first.second << " ";
-        cout << first.second << " ";
+        out(first.first);
+        out(first.second);
     } else if constexpr (is_same<T, vi>::value || is_same<T, vll>::value) {
         for (int i = 0; i < first.size(); i++) {
-            cout << first[i] << " ";
+            out(first[i]);
         }
     } else {
-        cout << first;
+        cout << first << " ";
     }
     cout << endl;
     if constexpr (sizeof...(args) > 0) {
-        input(args...);
+        in(args...);
     }
 }
 
-void print() {
+void out() {
     cout << endl;
 }
 
@@ -86,51 +87,44 @@ void smin(S& a, const T& b) {
         a = b;
 };
 
-vi vivec(int n) {
-    return vi(n);
-}
-
-vi vivec(vi params) {
-    return params;
-}
-
-vll vllvec(int n) {
-    return vll(n);
-}
-
-vll vllvec(vll params) {
-    return params;
-}
-
 #define int(...)     \
     int __VA_ARGS__; \
-    input(__VA_ARGS__);
+    in(__VA_ARGS__);
 
 #define ll(...)     \
     ll __VA_ARGS__; \
-    input(__VA_ARGS__);
+    in(__VA_ARGS__);
 
 #define pi(...)     \
     pi __VA_ARGS__; \
-    input(__VA_ARGS__);
+    in(__VA_ARGS__);
 
 #define pll(...)     \
     pll __VA_ARGS__; \
-    input(__VA_ARGS__);
+    in(__VA_ARGS__);
 
-#define vi(m, ...)                   \
-    vi m = move(vivec(__VA_ARGS__)); \
-    input(m);
+#define vi(m, ...)                         \
+    vi m = move(vector<int>(__VA_ARGS__)); \
+    in(m);
 
-#define vll(m, ...)                    \
-    vll m = move(vllvec(__VA_ARGS__)); \
-    input(m);
+#define vll(m, ...)                        \
+    vll m = move(vector<ll>(__VA_ARGS__)); \
+    in(m);
 
-#define ret(...)        \
-    print(__VA_ARGS__); \
+#define vvi(m, rows, cols): \
+    vvi m(rows, vi(cols));  \
+    in(m);
+
+#define vvll(m, rows, cols): \
+    vvll m(rows, vll(cols)); \
+    in(m);
+
+#define ret(...)      \
+    out(__VA_ARGS__); \
     return;
 
-#define vec ranges::to<vector>()
+#define svec ranges::to<vector>()
+#define sstr ranges::to<string>()
 #define sort ranges::sort
 #define asc ranges::sort
 #define desc(vec) ranges::sort(vec, std::greater{});
@@ -139,7 +133,7 @@ vll vllvec(vll params) {
 #define some ranges::any_of
 #define all ranges::all_of
 #define none ranges::none_of
-#define zip(...) ranges::views::cartesian_product(__VA_ARGS__) | vec
+#define zip(...) ranges::views::cartesian_product(__VA_ARGS__) | svec
 #define drop ranges::views::drop
 #define take ranges::views::take
 #define chunk ranges::views::chunk
@@ -149,23 +143,19 @@ vll vllvec(vll params) {
 #define has some
 #define contains some
 #define slice ranges::views::slice
-#define fin(left, right) for (const auto& left : right)
+#define len(r) ranges::distance(r)
+#define for(left, right) for (const auto& left : right)
 #define pred(...) [&](__VA_ARGS__)
 #define cond(...) [&](auto a) { return (__VA_ARGS__) }
 #define comp(...) [&](auto a, auto b) { return (__VA_ARGS__) }
 #pragma endregion
 
 void solve() {
-    int(n);
-    vi(m, n);
-    fin(i, m) {
-        print(i);
-    }
 }
 
 int main() {
     int(TC);
-    print(TC);
+    out(TC);
     while (TC--)
         solve();
     return 0;
