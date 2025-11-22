@@ -1,16 +1,5 @@
 #pragma region
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <string>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
+#include <bits/stdc++.h>
 
 #ifndef ONLINE_JUDGE
 #define endl "\n"
@@ -21,7 +10,7 @@
 #endif
 
 using namespace std;
-
+namespace rng = std::ranges;
 // Basic types
 
 using ll = long long;
@@ -33,6 +22,9 @@ using vi = vec<int>;
 using vll = vec<ll>;
 using vvi = vec<vi>;
 using vvll = vec<vll>;
+using str = string;
+template <typename T>
+using minheap = priority_queue<T, vector<T>, std::greater<T>()>;
 const int INF = 1e9 + 7;
 
 template <typename T, typename... Types>
@@ -75,6 +67,30 @@ void out() {
     cout << endl;
 }
 
+template <typename T>
+struct vectorizer {
+    template <rng::input_range R>
+    friend constexpr auto operator|(R&& r, const vectorizer& _) {
+        vec<T> arr;
+
+        if constexpr (requires { arr.reserve(rng::size(r)); })
+            arr.reserve(rng::size(r));
+
+        for (auto&& x : r) {
+            if constexpr (requires { arr.push_back(x); })
+                arr.push_back(x);
+        }
+
+        return arr;
+    }
+};
+
+// to<T>() factory
+template <typename T>
+constexpr auto to() {
+    return vectorizer<T>{};
+}
+
 template <typename S, typename T>
 void smax(S& a, const T& b) {
     if (a < b)
@@ -111,51 +127,66 @@ void smin(S& a, const T& b) {
     vll m = move(vector<ll>(__VA_ARGS__)); \
     in(m);
 
-#define vvi(m, rows, cols): \
-    vvi m(rows, vi(cols));  \
+#define vvi(m, rows, cols) \
+    vvi m(rows, vi(cols)); \
     in(m);
 
-#define vvll(m, rows, cols): \
+#define vvll(m, rows, cols)  \
     vvll m(rows, vll(cols)); \
     in(m);
+
+#define str(s) \
+    string s;  \
+    in(s);
 
 #define ret(...)      \
     out(__VA_ARGS__); \
     return;
 
-#define svec ranges::to<vector>()
-#define sstr ranges::to<string>()
-#define sort ranges::sort
-#define asc ranges::sort
-#define desc(vec) ranges::sort(vec, std::greater{});
-#define map ranges::views::transform
-#define filter ranges::views::filter
-#define some ranges::any_of
-#define all ranges::all_of
-#define none ranges::none_of
-#define zip(...) ranges::views::cartesian_product(__VA_ARGS__) | svec
-#define drop ranges::views::drop
-#define take ranges::views::take
-#define chunk ranges::views::chunk
-#define slide ranges::views::slide
-#define fill ranges::iota
-#define bs ranges::binary_search
+#define sort rng::sort
+#define asc rng::sort
+#define desc(vec) rng::sort(vec, std::greater{});
+#define sum rng::accumulate
+#define cnt rng::count
+#define cnt_if rng::count_if
+#define fill rng::iota
+#define bs rng::binary_search
+#define len(r) rng::distance(r)
+
+#define map rng::views::transform
+#define filter rng::views::filter
+#define some rng::any_of
+#define all rng::all_of
+#define none rng::none_of
+#define zip(...) rng::views::cartesian_product(__VA_ARGS__) | svec
+#define drop rng::views::drop
+#define take rng::views::take
+#define drop_while rng::views::drop_while
+#define take_while rng::views::take_while
+#define chunk rng::views::chunk
+#define slide rng::views::slide
+#define adj(n) rng::views::adjacent<n>
 #define has some
 #define contains some
-#define slice ranges::views::slice
-#define len(r) ranges::distance(r)
-#define for(left, right) for (const auto& left : right)
+#define rev rng::views::reverse
+#define slice rng::views::slice
+
+#define loop(left, right) for (const auto& left : right)
 #define pred(...) [&](__VA_ARGS__)
-#define cond(...) [&](auto a) { return (__VA_ARGS__) }
-#define comp(...) [&](auto a, auto b) { return (__VA_ARGS__) }
+#define cond(...) [&](auto a) { return (__VA_ARGS__); }
+#define comp(...) [&](auto a, auto b) { return (__VA_ARGS__); }
 #pragma endregion
 
 void solve() {
+    str(s);
+    auto res = s | filter(pred(auto a) { return a == '<'; }) | to<char>();
+    loop(c, res) {
+        out(c);
+    }
 }
 
 int main() {
     int(TC);
-    out(TC);
     while (TC--)
         solve();
     return 0;
