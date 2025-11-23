@@ -11,7 +11,6 @@
 
 using namespace std;
 namespace rng = std::ranges;
-// Basic types
 
 using ll = long long;
 using pi = pair<int, int>;
@@ -24,19 +23,27 @@ using vvi = vec<vi>;
 using vvll = vec<vll>;
 using str = string;
 template <typename T>
-using minheap = priority_queue<T, vector<T>, std::greater<T>()>;
+using minheap = priority_queue<T, vector<T>, std::greater<T>>;
 const int INF = 1e9 + 7;
 
+template <typename>
+struct is_pair_t : false_type {};
+template <typename A, typename B>
+struct is_pair_t<pair<A, B>> : true_type {};
+
+template <typename>
+struct is_vec_t : false_type {};
+template <typename T>
+struct is_vec_t<vector<T>> : true_type {};
+
 template <typename T, typename... Types>
-void in(T& first, Types... args) {
-    if constexpr (is_same<T, pi>::value || is_same<T, pll>::value) {
+void in(T& first, Types&... args) {
+    if constexpr (is_pair_t<T>::value) {
         in(first.first);
         in(first.second);
-    } else if constexpr (is_same<T, vi>::value || is_same<T, vll>::value ||
-                         is_same<T, vvi>::value || is_same<T, vll>::value) {
-        for (int i = 0; i < first.size(); i++) {
-            in(first[i]);
-        }
+    } else if constexpr (is_vec_t<T>::value) {
+        for (auto&& elem : first)
+            in(elem);
     } else {
         cin >> first;
     }
@@ -46,25 +53,30 @@ void in(T& first, Types... args) {
 }
 
 template <typename T, typename... Types>
-void out(T first, Types... args) {
-    if constexpr (is_same<T, pi>::value || is_same<T, pll>::value) {
-        out(first.first);
-        out(first.second);
-    } else if constexpr (is_same<T, vi>::value || is_same<T, vll>::value) {
-        for (int i = 0; i < first.size(); i++) {
-            out(first[i]);
+void _out(const T& first, const Types&... args) {
+    if constexpr (is_pair_t<T>::value) {
+        _out(first.first);
+        _out(first.second);
+    } else if constexpr (is_vec_t<T>::value) {
+        for (auto&& elem : first) {
+            _out(elem);
         }
     } else {
         cout << first << " ";
     }
-    cout << endl;
     if constexpr (sizeof...(args) > 0) {
-        in(args...);
+        _out(args...);
     }
 }
 
 void out() {
     cout << endl;
+}
+
+template <typename T, typename... Types>
+void out(const T& first, const Types&... args) {
+    _out(first, args...);
+    out();
 }
 
 template <typename T>
@@ -85,7 +97,6 @@ struct vectorizer {
     }
 };
 
-// to<T>() factory
 template <typename T>
 constexpr auto to() {
     return vectorizer<T>{};
@@ -143,9 +154,15 @@ void smin(S& a, const T& b) {
     out(__VA_ARGS__); \
     return;
 
+#define pref(a)                                                                                   \
+    vec<conditional_t<is_same<decltype(a)::value_type, int>::value, ll, decltype(a)::value_type>> \
+        pref_##a(a.size() + 1);                                                                   \
+    for (int i = 1; i <= a.size(); i++)                                                           \
+        pref_##a[i] = pref_##a[i - 1] + a[i - 1];
+
 #define sort rng::sort
 #define asc rng::sort
-#define desc(vec) rng::sort(vec, std::greater{});
+#define desc(vec) rng::sort(vec, std::greater{})
 #define sum rng::accumulate
 #define cnt rng::count
 #define cnt_if rng::count_if
@@ -155,14 +172,14 @@ void smin(S& a, const T& b) {
 #define maxe(vec) *(rng::max_element(vec))
 #define mine(vec) *(rng::min_element(vec))
 #define maxi(vec) (rng::max_element(vec) - vec.begin())
-#define maxi(vec) (rng::min_element(vec) - vec.begin())
+#define mini(vec) (rng::min_element(vec) - vec.begin())
 #define some rng::any_of
 #define all rng::all_of
 #define none rng::none_of
 #define has some
 #define contains some
+#define iall(x) (x).begin(), (x).end()
 
-// save things to a vector and you can use the above things too
 #define fill rng::views::iota  // generate something lazily
 #define map rng::views::transform
 #define filter rng::views::filter
