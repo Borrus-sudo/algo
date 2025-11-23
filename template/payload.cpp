@@ -149,16 +149,24 @@ void smin(S& a, const T& b) {
 #define sum rng::accumulate
 #define cnt rng::count
 #define cnt_if rng::count_if
-#define fill rng::iota
 #define bs rng::binary_search
 #define len(r) rng::distance(r)
-
-#define map rng::views::transform
-#define filter rng::views::filter
+#define copy(src, dest) rng::copy(src, back_inserter(dest))
+#define maxe(vec) *(rng::max_element(vec))
+#define mine(vec) *(rng::min_element(vec))
+#define maxi(vec) (rng::max_element(vec) - vec.begin())
+#define maxi(vec) (rng::min_element(vec) - vec.begin())
 #define some rng::any_of
 #define all rng::all_of
 #define none rng::none_of
-#define zip(...) rng::views::cartesian_product(__VA_ARGS__) | svec
+#define has some
+#define contains some
+
+// save things to a vector and you can use the above things too
+#define fill rng::views::iota  // generate something lazily
+#define map rng::views::transform
+#define filter rng::views::filter
+#define zip(...) rng::views::cartesian_product(__VA_ARGS__)
 #define drop rng::views::drop
 #define take rng::views::take
 #define drop_while rng::views::drop_while
@@ -166,8 +174,7 @@ void smin(S& a, const T& b) {
 #define chunk rng::views::chunk
 #define slide rng::views::slide
 #define adj(n) rng::views::adjacent<n>
-#define has some
-#define contains some
+
 #define rev rng::views::reverse
 #define slice rng::views::slice
 
@@ -175,14 +182,14 @@ void smin(S& a, const T& b) {
 #define pred(...) [&](__VA_ARGS__)
 #define cond(...) [&](auto a) { return (__VA_ARGS__); }
 #define comp(...) [&](auto a, auto b) { return (__VA_ARGS__); }
+#define iter(i, start, stop) for (int i = start; i < stop; i++)
+#define jump(i, start, stop, jump) for (int i = start; i < stop; i += jump)
+#define riter(i, start, stop) for (int i = start; i >= stop; i--)
+#define rjump(i, start, stop, jump) for (int i = start; i >= stop; i -= jump)
 #pragma endregion
 
 void solve() {
-    str(s);
-    auto res = s | filter(pred(auto a) { return a == '<'; }) | to<char>();
-    loop(c, res) {
-        out(c);
-    }
+    // $0
 }
 
 int main() {
