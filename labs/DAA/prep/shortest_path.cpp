@@ -130,6 +130,7 @@ void bellman_ford(vector<vector<pair<int, int>>> adj_mat, int src, int dest) {
 // APSP
 // Can be used for negative edge weights but not negative edge cycles!
 // Negative edge cycles need correction you know
+// TC: O(V^3)
 void floyd_warshall(vector<vector<int>> adj_mat) {
     int n = adj_mat.size();
     vector<vector<int>> dist(n, vector<int>(n));
