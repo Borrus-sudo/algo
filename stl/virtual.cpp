@@ -13,6 +13,9 @@ class Instrument {
     virtual void play() {
         cout << "Playing instrument " << this->a << endl;
     }
+    virtual ~Instrument() {
+        cout << "Parent Destructor Called" << endl;
+    }
 };
 
 // public inheritance (whatever that was)
@@ -23,6 +26,9 @@ class Accordion : public Instrument {
     Accordion(int a = 6) : a(a) {
         cout << "Child constructor Called" << endl;
     };
+    ~Accordion() {
+        cout << "Child Destructor Called" << endl;
+    }
     void play() {
         cout << "Playing Accordion " << this->a << endl;
     }
@@ -33,8 +39,12 @@ int main() {
     // Instrument i2;
     // i1->play();
     // i2.play();
+    // Instrument i1 = Accordion();
+    // i1.play();
+
     Instrument* i3 = new Accordion();
-    i3->play();  // without virtual keyword at  @ L11, this would output 5!, makes me wanna figure
-                 // out how is this implemented in the lang?
+    i3->play();  // without virtual keyword at  @ L11, this would output "Playing Instrument 2"!
+    delete i3;
+
     return 0;
 }

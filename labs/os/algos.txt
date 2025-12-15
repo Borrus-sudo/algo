@@ -33,24 +33,24 @@ This causes a critical section problem
 
 
 Bounded Buffer Using Semaphores
-Semaphore empty = 0 // full slots
-Semaphore full = N // empty slots
+Semaphore empty = N // full slots
+Semaphore full = 0 // empty slots
 Semaphore lock = 1
 
 // PRODUCER code
-full.wait();
+empty.wait();
 lock.wait()
 // PRODUCE
 lock.signal();
-empty.signal();
+full.signal();
 
 
 // CONSUMER code
-empty.wait();
+full.wait();
 lock.wait();
 // CONSUME
 lock.signal();
-full.signal();
+empty.signal();
 
 
 Flag Variable 

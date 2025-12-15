@@ -1,74 +1,71 @@
+#include <algorithm>
 #include <iostream>
 #include <queue>
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
 #include <string>
+#include <unordered_map>
+#include <vector>
 using namespace std;
 
-struct PCB
-{
+struct PCB {
     int pid;
     int et;
     int at = 0;
     int priority = 0;
-    PCB(int pid, int et) : pid(pid), et(et) {}
-    PCB(int pid, int et, int priority) : pid(pid), et(et), priority(priority) {}
+    PCB(int pid, int et) : pid(pid), et(et) {
+    }
+    PCB(int pid, int et, int priority) : pid(pid), et(et), priority(priority) {
+    }
 };
 
-struct Record
-{
+struct Record {
     string pid;
     string ct;
     string tat;
     string wt;
     string et;
-    Record(string pid, string ct, string wt, string tat, string et) : pid(pid), ct(ct), tat(tat), wt(wt), et(et) {}
+    Record(string pid, string ct, string wt, string tat, string et)
+        : pid(pid), ct(ct), tat(tat), wt(wt), et(et) {
+    }
 };
 
-string padTo(std::string str, const size_t num, const char paddingChar = ' ')
-{
+string padTo(std::string str, const size_t num, const char paddingChar = ' ') {
     if (num > str.size())
         str.insert(0, num - str.size(), paddingChar);
     return str;
 }
 
-class FCFS
-{
-    queue<PCB *> processes;
+class FCFS {
+    queue<PCB*> processes;
     vector<Record> records;
     float avgWaitingTime = 0;
     float avgCompletionTime = 0;
     float avgTurnaroundTime = 0;
 
-public:
-    void input()
-    {
+   public:
+    void input() {
         int no;
         cout << "Enter number of processes: ";
         cin >> no;
-        for (int pid = 1; pid <= no; pid++)
-        {
+        for (int pid = 1; pid <= no; pid++) {
             int et;
             cout << "Enter execution time: ";
             cin >> et;
             processes.push(new PCB(pid, et));
         }
     };
-    void schedule()
-    {
+    void schedule() {
         // fcfs strategy
         int time = 0;
         int n = processes.size();
-        while (!processes.empty())
-        {
+        while (!processes.empty()) {
             auto process = processes.front();
             time += process->et;
             int ct = time;
             int tat = ct - 0;
             int wt = tat - process->et;
 
-            records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt), to_string(tat), to_string(process->et)));
+            records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt),
+                                     to_string(tat), to_string(process->et)));
 
             avgTurnaroundTime += tat;
             avgCompletionTime += ct;
@@ -79,8 +76,7 @@ public:
         avgTurnaroundTime /= n;
         avgCompletionTime /= n;
     }
-    void print()
-    {
+    void print() {
         int len = 17;
         string header = "";
 
@@ -92,8 +88,7 @@ public:
 
         cout << header << endl;
 
-        for (auto record : records)
-        {
+        for (auto record : records) {
             string line = "";
             line += padTo(record.pid, len);
             line += padTo(record.ct, len);
@@ -110,23 +105,20 @@ public:
     }
 };
 
-class RR
-{
-    queue<PCB *> processes;
+class RR {
+    queue<PCB*> processes;
     vector<Record> records;
     float avgWaitingTime = 0;
     float avgCompletionTime = 0;
     float avgTurnaroundTime = 0;
     int quant = 2;
 
-public:
-    void input()
-    {
+   public:
+    void input() {
         int no;
         cout << "Enter number of processes: ";
         cin >> no;
-        for (int pid = 1; pid <= no; pid++)
-        {
+        for (int pid = 1; pid <= no; pid++) {
             int et;
             cout << "Enter execution time: ";
             cin >> et;
@@ -135,27 +127,22 @@ public:
         cout << "Enter time quanta ";
         cin >> quant;
     };
-    void schedule()
-    {
+    void schedule() {
         // fcfs strategy
         int time = 0;
         int n = processes.size();
         unordered_map<int, int> execTimeTable;
-        while (!processes.empty())
-        {
+        while (!processes.empty()) {
             auto process = processes.front();
             int timeLeft = process->et - quant;
 
-            if (timeLeft > 0)
-            {
+            if (timeLeft > 0) {
                 time += quant;
                 execTimeTable[process->pid] += quant;
                 process->et = timeLeft;
                 processes.pop();
                 processes.push(process);
-            }
-            else
-            {
+            } else {
                 time += process->et;
                 execTimeTable[process->pid] += process->et;
 
@@ -163,8 +150,10 @@ public:
                 int tat = ct - 0;
                 int wt = tat - execTimeTable[process->pid];
 
-                // records.emplace_back(to_string(process->pid), to_string(ct), to_string(wt), to_string(tat), to_string(execTimeTable[process->pid]));
-                records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt), to_string(tat), to_string(execTimeTable[process->pid])));
+                // records.emplace_back(to_string(process->pid), to_string(ct), to_string(wt),
+                // to_string(tat), to_string(execTimeTable[process->pid]));
+                records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt),
+                                         to_string(tat), to_string(execTimeTable[process->pid])));
 
                 avgTurnaroundTime += (tat);
                 avgCompletionTime += (ct);
@@ -177,8 +166,7 @@ public:
         avgTurnaroundTime /= n;
         avgCompletionTime /= n;
     }
-    void print()
-    {
+    void print() {
         int len = 17;
         string header = "";
 
@@ -190,8 +178,7 @@ public:
 
         cout << header << endl;
 
-        for (auto record : records)
-        {
+        for (auto record : records) {
             string line = "";
             line += padTo(record.pid, len);
             line += padTo(record.ct, len);
@@ -207,43 +194,37 @@ public:
     }
 };
 
-class SJF
-{
-    vector<PCB *> processes;
+class SJF {
+    vector<PCB*> processes;
     vector<Record> records;
     float avgWaitingTime = 0;
     float avgCompletionTime = 0;
     float avgTurnaroundTime = 0;
 
-public:
-    void input()
-    {
+   public:
+    void input() {
         int no;
         cout << "Enter number of processes: ";
         cin >> no;
-        for (int pid = 1; pid <= no; pid++)
-        {
+        for (int pid = 1; pid <= no; pid++) {
             int et;
             cout << "Enter execution time: ";
             cin >> et;
             processes.push_back(new PCB(pid, et));
         }
     };
-    void schedule()
-    {
+    void schedule() {
         // fcfs strategy
-        sort(processes.begin(), processes.end(), [](auto a, auto b)
-             { return a->et < b->et; });
+        sort(processes.begin(), processes.end(), [](auto a, auto b) { return a->et < b->et; });
         int time = 0;
         int n = processes.size();
-        for (auto process : processes)
-        {
-
+        for (auto process : processes) {
             time += process->et;
             int ct = time;
             int tat = ct - process->at;
             int wt = tat - process->et;
-            records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt), to_string(tat), to_string(process->et)));
+            records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt),
+                                     to_string(tat), to_string(process->et)));
 
             avgTurnaroundTime += tat;
             avgCompletionTime += ct;
@@ -253,8 +234,7 @@ public:
         avgTurnaroundTime /= n;
         avgCompletionTime /= n;
     }
-    void print()
-    {
+    void print() {
         int len = 17;
         string header = "";
 
@@ -266,8 +246,7 @@ public:
 
         cout << header << endl;
 
-        for (auto record : records)
-        {
+        for (auto record : records) {
             string line = "";
             line += padTo(record.pid, len);
             line += padTo(record.ct, len);
@@ -283,22 +262,19 @@ public:
     }
 };
 
-class PriorityScheduling
-{
-    vector<PCB *> processes;
+class PriorityScheduling {
+    vector<PCB*> processes;
     vector<Record> records;
     float avgWaitingTime = 0;
     float avgCompletionTime = 0;
     float avgTurnaroundTime = 0;
 
-public:
-    void input()
-    {
+   public:
+    void input() {
         int no;
         cout << "Enter number of processes: ";
         cin >> no;
-        for (int pid = 1; pid <= no; pid++)
-        {
+        for (int pid = 1; pid <= no; pid++) {
             int et, priority;
             cout << "Enter execution time: ";
             cin >> et;
@@ -307,21 +283,19 @@ public:
             processes.push_back(new PCB(pid, et, priority));
         }
     };
-    void schedule()
-    {
+    void schedule() {
         // fcfs strategy
-        sort(processes.begin(), processes.end(), [](auto a, auto b)
-             { return a->priority < b->priority; });
+        sort(processes.begin(), processes.end(),
+             [](auto a, auto b) { return a->priority < b->priority; });
         int time = 0;
         int n = processes.size();
-        for (auto process : processes)
-        {
-
+        for (auto process : processes) {
             time += process->et;
             int ct = time;
             int tat = ct - process->at;
             int wt = tat - process->et;
-            records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt), to_string(tat), to_string(process->et)));
+            records.push_back(Record(to_string(process->pid), to_string(ct), to_string(wt),
+                                     to_string(tat), to_string(process->et)));
 
             avgTurnaroundTime += tat;
             avgCompletionTime += ct;
@@ -331,8 +305,7 @@ public:
         avgTurnaroundTime /= n;
         avgCompletionTime /= n;
     }
-    void print()
-    {
+    void print() {
         int len = 17;
         string header = "";
 
@@ -344,8 +317,7 @@ public:
 
         cout << header << endl;
 
-        for (auto record : records)
-        {
+        for (auto record : records) {
             string line = "";
 
             line += padTo(record.pid, len);
@@ -362,10 +334,8 @@ public:
     }
 };
 
-int main()
-{
-    while (true)
-    {
+int main() {
+    while (true) {
         cout << "Jinmay Jhaveri 241080027" << endl;
         cout << "Enter Scheduling Algorithm: " << endl;
         cout << "1. First Come First Serve" << endl;
@@ -376,39 +346,29 @@ int main()
         cout << "Enter option number (1/2/3/4/5) ";
         char opt;
         cin >> opt;
-        if (opt == '1')
-        {
+        if (opt == '1') {
             FCFS scheduler;
             scheduler.input();
             scheduler.schedule();
             scheduler.print();
-        }
-        else if (opt == '2')
-        {
+        } else if (opt == '2') {
             SJF scheduler;
             scheduler.input();
             scheduler.schedule();
             scheduler.print();
-        }
-        else if (opt == '3')
-        {
+        } else if (opt == '3') {
             RR scheduler;
             scheduler.input();
             scheduler.schedule();
             scheduler.print();
-        }
-        else if (opt == '4')
-        {
+        } else if (opt == '4') {
             PriorityScheduling scheduler;
             scheduler.input();
             scheduler.schedule();
             scheduler.print();
-        }
-        else if (opt == '5')
-        {
+        } else if (opt == '5') {
             return 0;
-        }
-        else
+        } else
             continue;
     }
     return 0;

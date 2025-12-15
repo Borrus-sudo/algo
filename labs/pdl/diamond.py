@@ -26,9 +26,9 @@ class D(B, C):
     def __init__(self):
         print("D")
 
-    # def show(self):
-    #     print("D")
-    #     super().show()
+    def show(self):
+        print("D")
+        super().show()
 
 
 print(D.mro())

@@ -10,6 +10,7 @@ void fcfs(int frames, vector<int>& procs) {
     int misses = 0;
     int hits = 0;
     for (auto pid : procs) {
+        cout << "Entered PID: " << pid << endl;
         cout << "Cache: " << cache.size() << " " << endl;
         for (auto spid : cache) {
             cout << "-> " << spid << endl;
@@ -22,9 +23,12 @@ void fcfs(int frames, vector<int>& procs) {
             cout << "Miss on the proc: " << pid << endl;
             misses++;
         }
-        if (cache.size() >= frames)
+        if (cache.size() >= frames) {
+            pres[*cache.begin()] = false;
             cache.erase(cache.begin());
+        }
         cache.push_back(pid);
+        pres[pid] = true;
     }
     cout << "#Misses " << misses << endl;
     cout << "#Hits " << hits << endl;
@@ -39,6 +43,7 @@ void lru(int frames, vector<int>& procs) {
     for (int i = 0; i < procs.size(); i++) {
         auto pid = procs[i];
         lastIdx[pid] = i;
+        cout << "Entered PID: " << pid << endl;
         cout << "Cache: " << cache.size() << " " << endl;
         for (auto spid : cache) {
             cout << "-> " << spid << endl;
@@ -62,6 +67,7 @@ void lru(int frames, vector<int>& procs) {
             cache.erase(ans);
         }
         cache.push_back(pid);
+        pres[pid] = true;
     }
     cout << "#Misses " << misses << endl;
     cout << "#Hits " << hits << endl;
@@ -72,10 +78,9 @@ void optimal(int frames, vector<int>& procs) {
     vector<int> cache;
     int misses = 0;
     int hits = 0;
-
     for (int i = 0; i < procs.size(); i++) {
         int pid = procs[i];
-
+        cout << "Entered PID: " << pid << endl;
         cout << "Cache: " << cache.size() << " " << endl;
         for (auto spid : cache)
             cout << "-> " << spid << endl;

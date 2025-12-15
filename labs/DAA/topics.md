@@ -5,6 +5,7 @@
     -   0/1 Knapsack
     -   LCS
     -   Assembly line
+    -   TSP
 
 -   Greedy
 
@@ -14,6 +15,20 @@
     -   Djikstra (Done)
         -   Single Source Shortest Path Algorithm, with non-negative edge weights
         -   TC: E\*log(V)
+    -   Floyd
+
+        -   All pairs shortest path algorithm
+
+    -   Warshall Algorithm - Reachability
+
+    -   Number of lengths
+        -   Nice matmul thingy
+
+-   Branch And Bound
+
+    -   Basically optimized backtracking. We eleminate the obvious from the state space.
+    -   TSP (I dunno why the matrix method even exists, a normal state space thing should work?)
+    -   0/1 knapsack
 
 -   Divide N Conquer
 
@@ -22,3 +37,4 @@
     -   Quick sort
 
 -   P vs NP problems
+    -   TSP
