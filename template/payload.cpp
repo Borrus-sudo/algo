@@ -21,6 +21,8 @@ using vi = vec<int>;
 using vll = vec<ll>;
 using vvi = vec<vi>;
 using vvll = vec<vll>;
+using si = set<int>;
+using sll = set<ll>;
 using str = string;
 template <typename T>
 using minheap = priority_queue<T, vector<T>, std::greater<T>>;
@@ -161,8 +163,8 @@ void smin(S& a, const T& b) {
         pref_##a[i] = pref_##a[i - 1] + a[i - 1];
 
 #define sort rng::sort
-#define asc rng::sort
-#define desc(vec) rng::sort(vec, std::greater{})
+#define asc sort
+#define desc(vec) sort(vec, std::greater{})
 #define sum rng::accumulate
 #define cnt rng::count
 #define cnt_if rng::count_if
@@ -176,33 +178,30 @@ void smin(S& a, const T& b) {
 #define some rng::any_of
 #define all rng::all_of
 #define none rng::none_of
-#define has some
-#define contains some
 #define iall(x) (x).begin(), (x).end()
 
-#define fill rng::views::iota  // generate something lazily
-#define map rng::views::transform
+#define fill rng::views::iota
+#define transform rng::views::transform
 #define filter rng::views::filter
 #define zip(...) rng::views::cartesian_product(__VA_ARGS__)
 #define drop rng::views::drop
 #define take rng::views::take
 #define drop_while rng::views::drop_while
 #define take_while rng::views::take_while
-#define chunk rng::views::chunk
-#define slide rng::views::slide
-#define adj(n) rng::views::adjacent<n>
-
+#define chunk rng::views::chunk         // disjoint
+#define slide rng::views::slide         // joint
+#define adj(n) rng::views::adjacent<n>  // joint in a tuple
 #define rev rng::views::reverse
 #define slice rng::views::slice
 
-#define loop(left, right) for (const auto& left : right)
-#define pred(...) [&](__VA_ARGS__)
-#define cond(...) [&](auto a) { return (__VA_ARGS__); }
-#define comp(...) [&](auto a, auto b) { return (__VA_ARGS__); }
-#define iter(i, start, stop) for (int i = start; i < stop; i++)
-#define jump(i, start, stop, jump) for (int i = start; i < stop; i += jump)
-#define riter(i, start, stop) for (int i = start; i >= stop; i--)
-#define rjump(i, start, stop, jump) for (int i = start; i >= stop; i -= jump)
+#define loop(left, right) for (auto& left : right)
+#define uni(...) [&](auto a) { return (__VA_ARGS__); }
+#define bi(...) [&](auto a, auto b) { return (__VA_ARGS__); }
+#define poly(...) [&](__VA_ARGS__)
+#define rep(i, len) for (int i = 0; i < len; i++)
+#define rrep(i, len) for (int i = len - 1; i >= 0; i--)
+#define iter(i, start, stop, jump) for (int i = start; i < stop; i += jump)
+#define riter(i, start, stop, jump) for (int i = start - 1; i >= stop; i -= jump)
 #pragma endregion
 
 void solve() {
