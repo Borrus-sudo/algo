@@ -3,7 +3,9 @@
 
 #ifndef ONLINE_JUDGE
 #define endl "\n"
-#define dbg(x) cout << "Line(" << __LINE__ << ") -> " << #x << " = " << (x) << endl;
+#define dbg(x)                                             \
+    cout << "Line(" << __LINE__ << ") -> " << #x << " = "; \
+    out(x);
 #else
 #define endl std::endl
 #define dbg
@@ -38,6 +40,11 @@ struct is_vec_t : false_type {};
 template <typename T>
 struct is_vec_t<vector<T>> : true_type {};
 
+template <typename>
+struct is_set_t : false_type {};
+template <typename T>
+struct is_set_t<set<T>> : true_type {};
+
 template <typename T, typename... Types>
 void in(T& first, Types&... args) {
     if constexpr (is_pair_t<T>::value) {
@@ -59,7 +66,7 @@ void _out(const T& first, const Types&... args) {
     if constexpr (is_pair_t<T>::value) {
         _out(first.first);
         _out(first.second);
-    } else if constexpr (is_vec_t<T>::value) {
+    } else if constexpr (is_vec_t<T>::value || is_set_t<T>::value) {
         for (auto&& elem : first) {
             _out(elem);
         }
@@ -108,50 +115,44 @@ template <typename S, typename T>
 void smax(S& a, const T& b) {
     if (a < b)
         a = b;
-};
+}
 
 template <typename S, typename T>
 void smin(S& a, const T& b) {
     if (a > b)
         a = b;
-};
+}
 
 #define int(...)     \
     int __VA_ARGS__; \
     in(__VA_ARGS__);
-
 #define ll(...)     \
     ll __VA_ARGS__; \
     in(__VA_ARGS__);
-
 #define pi(...)     \
     pi __VA_ARGS__; \
     in(__VA_ARGS__);
-
 #define pll(...)     \
     pll __VA_ARGS__; \
     in(__VA_ARGS__);
-
-#define vi(m, ...)                         \
-    vi m = move(vector<int>(__VA_ARGS__)); \
+#define vi(m, ...)                      \
+    vi m = move(vec<int>(__VA_ARGS__)); \
     in(m);
-
-#define vll(m, ...)                        \
-    vll m = move(vector<ll>(__VA_ARGS__)); \
+#define vll(m, ...)                     \
+    vll m = move(vec<ll>(__VA_ARGS__)); \
     in(m);
-
 #define vvi(m, rows, cols) \
     vvi m(rows, vi(cols)); \
     in(m);
-
 #define vvll(m, rows, cols)  \
     vvll m(rows, vll(cols)); \
     in(m);
-
 #define str(s) \
-    string s;  \
+    str s;     \
     in(s);
-
+#define vs(m, ...)                            \
+    vec<str> m = move(vec<str>(__VA_ARGS__)); \
+    in(m);
 #define ret(...)      \
     out(__VA_ARGS__); \
     return;
@@ -165,7 +166,8 @@ void smin(S& a, const T& b) {
 #define sort rng::sort
 #define asc sort
 #define desc(vec) sort(vec, std::greater{})
-#define sum rng::accumulate
+#define accumulate(vec, ...) \
+    std::accumulate(iall(vec), __VA_ARGS__))
 #define cnt rng::count
 #define cnt_if rng::count_if
 #define bs rng::binary_search
@@ -180,19 +182,19 @@ void smin(S& a, const T& b) {
 #define none rng::none_of
 #define iall(x) (x).begin(), (x).end()
 
-#define fill rng::views::iota
+#define iota rng::views::iota
 #define transform rng::views::transform
 #define filter rng::views::filter
-#define zip(...) rng::views::cartesian_product(__VA_ARGS__)
+#define zip(...) rng::views::zip(__VA_ARGS__)
 #define drop rng::views::drop
 #define take rng::views::take
 #define drop_while rng::views::drop_while
 #define take_while rng::views::take_while
-#define chunk rng::views::chunk         // disjoint
-#define slide rng::views::slide         // joint
-#define adj(n) rng::views::adjacent<n>  // joint in a tuple
+#define chunk rng::views::chunk
+#define slide rng::views::slide
+#define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
-#define slice rng::views::slice
+#define repeat rng::views::repeat
 
 #define loop(left, right) for (auto& left : right)
 #define uni(...) [&](auto a) { return (__VA_ARGS__); }
