@@ -166,8 +166,7 @@ void smin(S& a, const T& b) {
 #define sort rng::sort
 #define asc sort
 #define desc(vec) sort(vec, std::greater{})
-#define accumulate(vec, ...) \
-    std::accumulate(iall(vec), __VA_ARGS__))
+#define accumulate(vec, ...) std::accumulate(iall(vec), __VA_ARGS__)
 #define cnt rng::count
 #define cnt_if rng::count_if
 #define bs rng::binary_search
