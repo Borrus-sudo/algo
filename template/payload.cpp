@@ -3,9 +3,9 @@
 
 #ifndef ONLINE_JUDGE
 #define endl "\n"
-#define dbg(x)                                             \
-    cout << "Line(" << __LINE__ << ") -> " << #x << " = "; \
-    out(x);
+#define dbg(...)                                                     \
+    cout << "Line(" << __LINE__ << ") -> " << #__VA_ARGS__ << " = "; \
+    out(__VA_ARGS__);
 #else
 #define endl std::endl
 #define dbg
@@ -13,6 +13,7 @@
 
 using namespace std;
 namespace rng = std::ranges;
+using namespace rng::views;
 
 using ll = long long;
 using pi = pair<int, int>;
@@ -28,6 +29,8 @@ using sll = set<ll>;
 using str = string;
 template <typename T>
 using minheap = priority_queue<T, vector<T>, std::greater<T>>;
+template <typename T>
+using maxheap = priority_queue<T>;
 const int INF = 1e9 + 7;
 
 template <typename>
@@ -44,6 +47,11 @@ template <typename>
 struct is_set_t : false_type {};
 template <typename T>
 struct is_set_t<set<T>> : true_type {};
+
+template <typename>
+struct is_tuple_t : false_type {};
+template <typename... Types>
+struct is_tuple_t<tuple<Types...>> : true_type {};
 
 template <typename T, typename... Types>
 void in(T& first, Types&... args) {
@@ -66,12 +74,17 @@ void _out(const T& first, const Types&... args) {
     if constexpr (is_pair_t<T>::value) {
         _out(first.first);
         _out(first.second);
-    } else if constexpr (is_vec_t<T>::value || is_set_t<T>::value) {
+    } else if constexpr (std::ranges::range<T>) {
         for (auto&& elem : first) {
             _out(elem);
         }
     } else {
-        cout << first << " ";
+        if constexpr (is_same<T, float>::value)
+            cout << std::setprecision(std::numeric_limits<float>::max_digits10) << first << " ";
+        else if constexpr (is_same<T, double>::value)
+            cout << std::setprecision(std::numeric_limits<double>::max_digits10) << first << " ";
+        else
+            cout << first << " ";
     }
     if constexpr (sizeof...(args) > 0) {
         _out(args...);
@@ -122,6 +135,34 @@ void smin(S& a, const T& b) {
     if (a > b)
         a = b;
 }
+template <typename T>
+    requires is_pair_t<T>::value || is_set_t<T>::value || is_vec_t<T>::value || is_tuple_t<T>::value
+auto f(T container) {
+    if constexpr (is_pair_t<T>::value) {
+        return container.first;
+    } else if constexpr (is_set_t<T>::value) {
+        return *(container.begin());
+    } else if constexpr (is_vec_t<T>::value) {
+        return container.front();
+    } else if constexpr (is_tuple_t<T>::value) {
+        return get<0>(container);
+    }
+}
+
+template <typename T>
+    requires is_pair_t<T>::value || is_set_t<T>::value || is_vec_t<T>::value || is_tuple_t<T>::value
+auto b(T container) {
+    if constexpr (is_pair_t<T>::value) {
+        return container.second;
+    } else if constexpr (is_set_t<T>::value) {
+        return *(container.rbegin());
+    } else if constexpr (is_vec_t<T>::value) {
+        return container.back();
+    } else if constexpr (is_tuple_t<T>::value) {
+        constexpr size_t N = std::tuple_size_v<T>;
+        return get<N - 1>(container);
+    }
+}
 
 #define int(...)     \
     int __VA_ARGS__; \
@@ -170,7 +211,7 @@ void smin(S& a, const T& b) {
 #define cnt rng::count
 #define cnt_if rng::count_if
 #define bs rng::binary_search
-#define len(r) rng::distance(r)
+#define len(r) size_cast<int>(rng::distance(r))
 #define copy(src, dest) rng::copy(src, back_inserter(dest))
 #define maxe(vec) *(rng::max_element(vec))
 #define mine(vec) *(rng::min_element(vec))
@@ -180,29 +221,29 @@ void smin(S& a, const T& b) {
 #define all rng::all_of
 #define none rng::none_of
 #define iall(x) (x).begin(), (x).end()
+#define odd(x) (x & 1)
+#define even(x) !(odd(x))
 
-#define iota rng::views::iota
-#define transform rng::views::transform
-#define filter rng::views::filter
-#define zip(...) rng::views::zip(__VA_ARGS__)
-#define drop rng::views::drop
-#define take rng::views::take
-#define drop_while rng::views::drop_while
-#define take_while rng::views::take_while
-#define chunk rng::views::chunk
-#define slide rng::views::slide
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
-#define repeat rng::views::repeat
+#define transform rng::views::transform
+#define izip rng::views::enumerate
+#define iota rng::views::iota
+#define filterIdx(...) izip | filter(__VA_ARGS__) | transform(uni(b(a)))
 
-#define loop(left, right) for (auto& left : right)
 #define uni(...) [&](auto a) { return (__VA_ARGS__); }
 #define bi(...) [&](auto a, auto b) { return (__VA_ARGS__); }
 #define poly(...) [&](__VA_ARGS__)
+
 #define rep(i, len) for (int i = 0; i < len; i++)
 #define rrep(i, len) for (int i = len - 1; i >= 0; i--)
-#define iter(i, start, stop, jump) for (int i = start; i < stop; i += jump)
-#define riter(i, start, stop, jump) for (int i = start - 1; i >= stop; i -= jump)
+#define citer(left, right) for (const auto& left : right)
+#define iter(left, right) for (auto& left : right)
+
+#define bits(x)                                                                               \
+    for (auto _bits = bitset<conditional_t<is_same_v<decltype(x), int>, 32, 64>>(x), idx = 1, \
+              bit = _bits[idx];                                                               \
+         idx <= _bits.size(); idx++, bit = bits[idx - 1])
 #pragma endregion
 
 void solve() {
@@ -210,8 +251,12 @@ void solve() {
 }
 
 int main() {
-    int(TC);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    int TC = 1;
+    // cin >> TC;
     while (TC--)
         solve();
     return 0;
-}
+};

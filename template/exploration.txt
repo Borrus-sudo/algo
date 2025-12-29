@@ -52,3 +52,10 @@ for(nums, idx, elem) {
 
 I want to make print certainly easier and also wanna be able to like easily return the function
 
+Problems:
+// figure out the rng::distance data type potential problem
+// figure out the types better?
+// Allow for tuple input too?
+// Support a ModInt datatype
+// copy should be working well for other stuff
+// Support something for bits too
