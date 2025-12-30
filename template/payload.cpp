@@ -55,10 +55,11 @@ struct is_tuple_t<tuple<Types...>> : true_type {};
 
 template <typename T, typename... Types>
 void in(T& first, Types&... args) {
-    if constexpr (is_pair_t<T>::value) {
+    using K = remove_cvref_t<T>;
+    if constexpr (is_pair_t<K>::value) {
         in(first.first);
         in(first.second);
-    } else if constexpr (is_vec_t<T>::value) {
+    } else if constexpr (is_vec_t<K>::value) {
         for (auto&& elem : first)
             in(elem);
     } else {
@@ -71,17 +72,18 @@ void in(T& first, Types&... args) {
 
 template <typename T, typename... Types>
 void _out(const T& first, const Types&... args) {
-    if constexpr (is_pair_t<T>::value) {
+    using K = remove_cvref_t<T>;
+    if constexpr (is_pair_t<K>::value) {
         _out(first.first);
         _out(first.second);
-    } else if constexpr (std::ranges::range<T>) {
+    } else if constexpr (std::ranges::range<K> && !is_same_v<K, string>) {
         for (auto&& elem : first) {
             _out(elem);
         }
     } else {
-        if constexpr (is_same<T, float>::value)
+        if constexpr (is_same_v<K, float>)
             cout << std::setprecision(std::numeric_limits<float>::max_digits10) << first << " ";
-        else if constexpr (is_same<T, double>::value)
+        else if constexpr (is_same_v<K, double>)
             cout << std::setprecision(std::numeric_limits<double>::max_digits10) << first << " ";
         else
             cout << first << " ";
@@ -136,30 +138,34 @@ void smin(S& a, const T& b) {
         a = b;
 }
 template <typename T>
-    requires is_pair_t<T>::value || is_set_t<T>::value || is_vec_t<T>::value || is_tuple_t<T>::value
-auto f(T container) {
-    if constexpr (is_pair_t<T>::value) {
+    requires is_pair_t<remove_cvref_t<T>>::value || is_set_t<remove_cvref_t<T>>::value ||
+             is_vec_t<remove_cvref_t<T>>::value || is_tuple_t<remove_cvref_t<T>>::value
+auto f(T& container) {
+    using K = remove_cvref_t<T>;
+    if constexpr (is_pair_t<K>::value) {
         return container.first;
-    } else if constexpr (is_set_t<T>::value) {
+    } else if constexpr (is_set_t<K>::value) {
         return *(container.begin());
-    } else if constexpr (is_vec_t<T>::value) {
+    } else if constexpr (is_vec_t<K>::value) {
         return container.front();
-    } else if constexpr (is_tuple_t<T>::value) {
+    } else if constexpr (is_tuple_t<K>::value) {
         return get<0>(container);
     }
 }
 
 template <typename T>
-    requires is_pair_t<T>::value || is_set_t<T>::value || is_vec_t<T>::value || is_tuple_t<T>::value
-auto b(T container) {
-    if constexpr (is_pair_t<T>::value) {
+    requires is_pair_t<remove_cvref_t<T>>::value || is_set_t<remove_cvref_t<T>>::value ||
+             is_vec_t<remove_cvref_t<T>>::value || is_tuple_t<remove_cvref_t<T>>::value
+auto b(T& container) {
+    using K = remove_cvref_t<T>;
+    if constexpr (is_pair_t<K>::value) {
         return container.second;
-    } else if constexpr (is_set_t<T>::value) {
+    } else if constexpr (is_set_t<K>::value) {
         return *(container.rbegin());
-    } else if constexpr (is_vec_t<T>::value) {
+    } else if constexpr (is_vec_t<K>::value) {
         return container.back();
-    } else if constexpr (is_tuple_t<T>::value) {
-        constexpr size_t N = std::tuple_size_v<T>;
+    } else if constexpr (is_tuple_t<K>::value) {
+        constexpr size_t N = std::tuple_size_v<K>;
         return get<N - 1>(container);
     }
 }
@@ -223,6 +229,7 @@ auto b(T container) {
 #define iall(x) (x).begin(), (x).end()
 #define odd(x) (x & 1)
 #define even(x) !(odd(x))
+#define get_bit(i, x) (((x) & (1 << i)) != 0);
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -240,10 +247,6 @@ auto b(T container) {
 #define citer(left, right) for (const auto& left : right)
 #define iter(left, right) for (auto& left : right)
 
-#define bits(x)                                                                               \
-    for (auto _bits = bitset<conditional_t<is_same_v<decltype(x), int>, 32, 64>>(x), idx = 1, \
-              bit = _bits[idx];                                                               \
-         idx <= _bits.size(); idx++, bit = bits[idx - 1])
 #pragma endregion
 
 void solve() {
