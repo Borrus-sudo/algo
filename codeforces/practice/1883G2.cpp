@@ -232,7 +232,7 @@ auto b(T& container) {
 #define iall(x) (x).begin(), (x).end()
 #define odd(x) (x & 1)
 #define even(x) !(odd(x))
-#define get_bit(i, x) (((x) & (1 << (i))) != 0);
+#define get_bit(i, x) (((x) & (1 << i)) != 0);
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -254,7 +254,33 @@ auto b(T& container) {
 #pragma endregion
 
 void solve() {
-    // $0
+    int(n, m);  // m = 1
+    vi(a, n - 1);
+    vi(bt, n);
+    multiset<int> b(iall(bt));
+    int res = 0;
+    iter(elem, a) {
+        auto loc = b.upper_bound(elem);
+        if (loc == b.end()) {
+            // cooked
+            res++;
+            continue;
+        }
+        b.erase(loc);
+    }
+    // exactly one elem is left
+    // we gotta see ho
+    int elem = *(b.rbegin());
+    if (elem > m) {
+        // no cost
+        out((ll)res * m);
+    } else {
+        // elem <= m
+        // so for (elem - 1) (no cost) .. (m - elem + 1) (cost)
+        ll resf = (ll)res * m;
+        resf += (m - elem + 1);
+        out(resf);
+    }
 }
 
 int main() {

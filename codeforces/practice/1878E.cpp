@@ -232,7 +232,7 @@ auto b(T& container) {
 #define iall(x) (x).begin(), (x).end()
 #define odd(x) (x & 1)
 #define even(x) !(odd(x))
-#define get_bit(i, x) (((x) & (1 << (i))) != 0);
+#define get_bit(i, x) (((x) & (1 << (i))) != 0)
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -254,7 +254,48 @@ auto b(T& container) {
 #pragma endregion
 
 void solve() {
-    // $0
+    int(n);
+    vi(a, n);
+    int(q);
+    vec<pi> queries(q);
+    in(queries);
+    vvi bit_pref(32, vec<int>(n + 1, 0));
+    rep(i, 32) {
+        int idx = 1;
+        iter(elem, a) {
+            bit_pref[i][idx] += bit_pref[i][idx - 1] + get_bit(i, elem);
+            idx++;
+        }
+    }
+    auto binary_search = poly(int l, int k) {
+        int fixedEnd = l;
+        int r = n;
+        int ans = -1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            ll payload = 0;
+            rrep(i, 32) {
+                int bit = bit_pref[i][mid] - bit_pref[i][fixedEnd - 1] == (mid - fixedEnd + 1);
+                payload <<= 1;
+                payload += bit;
+            }
+            dbg(payload);
+            if (payload >= k) {
+                ans = mid;
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        return ans;
+    };
+    vi ans;
+    iter(query, queries) {
+        auto [l, k] = query;
+        int res = binary_search(l, k);
+        ans.pb(res);
+    }
+    out(ans);
 }
 
 int main() {

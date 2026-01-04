@@ -5,7 +5,8 @@
 #define endl "\n"
 #define dbg(...)                                                     \
     cout << "Line(" << __LINE__ << ") -> " << #__VA_ARGS__ << " = "; \
-    out(__VA_ARGS__);
+    out(__VA_ARGS__);                                                \
+    cout << std::flush;
 #else
 #define endl std::endl
 #define dbg
@@ -232,7 +233,7 @@ auto b(T& container) {
 #define iall(x) (x).begin(), (x).end()
 #define odd(x) (x & 1)
 #define even(x) !(odd(x))
-#define get_bit(i, x) (((x) & (1 << (i))) != 0);
+#define get_bit(i, x) (((x) & (1 << i)) != 0);
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -254,7 +255,33 @@ auto b(T& container) {
 #pragma endregion
 
 void solve() {
-    // $0
+    int(n);
+    vec<pi> a(n);
+    in(a);
+    auto works = poly(int k) {
+        // int pos = 0;
+        // int avail = 0;
+        int l = 0, r = 0;
+        citer(strip, a) {
+            l = max(l - k, f(strip));
+            r = min(r + k, b(strip));
+            if (l > r)
+                return false;
+        }
+        return true;
+    };
+    int l = 0, r = 1e9, ans = -1;
+    while (l <= r) {
+        int mid = l + (r - l) / 2;
+        if (works(mid)) {
+            ans = mid;
+            r = mid - 1;
+        } else {
+            //
+            l = mid + 1;
+        }
+    }
+    out(ans);
 }
 
 int main() {

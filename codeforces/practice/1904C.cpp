@@ -232,7 +232,7 @@ auto b(T& container) {
 #define iall(x) (x).begin(), (x).end()
 #define odd(x) (x & 1)
 #define even(x) !(odd(x))
-#define get_bit(i, x) (((x) & (1 << (i))) != 0);
+#define get_bit(i, x) (((x) & (1 << i)) != 0);
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -254,7 +254,47 @@ auto b(T& container) {
 #pragma endregion
 
 void solve() {
-    // $0
+    int(n, k);
+    vll(a, n);
+    if (k >= 3) {
+        ret(0);
+    }
+    int dropElems = 1;
+    vll possibs = {};
+    iter(elem, a | take(len(a) - 1)) {
+        iter(sElem, a | drop(dropElems)) {
+            possibs.pb(abs(elem - sElem));
+        }
+        dropElems++;
+    }
+
+    if (k == 1) {
+        ll res = min(mine(a), mine(possibs));
+        out(res);
+    } else if (k == 2) {
+        // gotta optimize this
+        ll cart_prod_min = LLONG_MAX;
+        asc(a);
+        iter(elem, possibs) {
+            auto loc = lower_bound(iall(a), elem);
+            ll lesser = LLONG_MAX, more = LLONG_MAX;
+            if (loc != a.end()) {
+                more = *loc;
+            }
+            if (loc != a.begin()) {
+                loc--;
+                lesser = *loc;
+            }
+            if (lesser != LLONG_MAX) {
+                smin(cart_prod_min, elem - lesser);
+            }
+            if (more != LLONG_MAX) {
+                smin(cart_prod_min, more - elem);
+            }
+        }
+        ll res = min(min(f(a), mine(possibs)), cart_prod_min);
+        out(res);
+    }
 }
 
 int main() {

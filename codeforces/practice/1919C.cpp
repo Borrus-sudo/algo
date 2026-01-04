@@ -232,7 +232,7 @@ auto b(T& container) {
 #define iall(x) (x).begin(), (x).end()
 #define odd(x) (x & 1)
 #define even(x) !(odd(x))
-#define get_bit(i, x) (((x) & (1 << (i))) != 0);
+#define get_bit(i, x) (((x) & (1 << i)) != 0);
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -254,7 +254,42 @@ auto b(T& container) {
 #pragma endregion
 
 void solve() {
-    // $0
+    int(n);
+    vi(a, n);
+    vi p1, p2;
+    p1.pb(INT_MIN);
+    p2.pb(INT_MIN);
+    int penalty = 0;
+    iter(elem, a) {
+        int l1 = b(p1);
+        int l2 = b(p2);
+        // put the penalty at the minimum of the two elements
+        if (elem <= l1 && elem <= l2) {
+            if (l1 < l2) {
+                p1.pb(elem);
+            } else {
+                p2.pb(elem);
+            }
+        } else if (elem > l1 && elem > l2) {
+            if (l1 < l2) {
+                p1.pb(elem);
+            } else {
+                p2.pb(elem);
+            }
+            penalty++;
+        } else if (elem <= l1 && elem > l2) {
+            p1.pb(elem);
+        } else if (elem > l1 && elem <= l2) {
+            p2.pb(elem);
+        }
+    }
+    dbg(p1);
+    dbg(p2);
+    if (len(p1) > 1)
+        penalty--;
+    if (len(p2) > 1)
+        penalty--;
+    out(penalty);
 }
 
 int main() {
