@@ -173,6 +173,16 @@ auto b(T& container) {
     }
 }
 
+unordered_map<str, int> _nextCache;
+template <typename T>
+T _nextElem(vec<T>& container, str&& identifier) {
+    int& next = _nextCache[identifier];
+    auto val = container[next];
+    next += 1;
+    next %= container.size();
+    return val;
+}
+
 #define int(...)     \
     int __VA_ARGS__; \
     in(__VA_ARGS__);
@@ -207,7 +217,7 @@ auto b(T& container) {
     out(__VA_ARGS__); \
     return;
 
-#define pref(a)                                                                                   \
+#define pfx(a)                                                                                    \
     vec<conditional_t<is_same<decltype(a)::value_type, int>::value, ll, decltype(a)::value_type>> \
         pref_##a(a.size() + 1);                                                                   \
     for (int i = 1; i <= a.size(); i++)                                                           \
@@ -230,9 +240,9 @@ auto b(T& container) {
 #define all rng::all_of
 #define none rng::none_of
 #define iall(x) (x).begin(), (x).end()
-#define odd(x) (x & 1)
-#define even(x) !(odd(x))
-#define get_bit(i, x) (((x) & (1 << (i))) != 0);
+#define odd(x) ((x) & 1)
+#define even(x) (!(odd(x)))
+#define get_bit(i, x) (((x) & (1 << (i))) != 0)
 
 #define adj(n) rng::views::adjacent<n>
 #define rev rng::views::reverse
@@ -241,6 +251,7 @@ auto b(T& container) {
 #define iota rng::views::iota
 #define filterIdx(...) izip | filter(__VA_ARGS__) | transform(uni(b(a)))
 #define pb push_back
+#define next(container) _nextElem(container, #container)
 
 #define uni(...) [&](auto a) { return (__VA_ARGS__); }
 #define bi(...) [&](auto a, auto b) { return (__VA_ARGS__); }

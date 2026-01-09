@@ -58,4 +58,5 @@ Problems:
 // Allow for tuple input too?
 // Support a ModInt datatype
 // copy should be working well for other stuff
-// Support something for bits too
+// Support table of bits and better debugging?
+// Figure out dbg to make it not lazy print so we can see output at end but dbg immediately
