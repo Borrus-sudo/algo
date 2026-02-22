@@ -221,6 +221,9 @@ class GraphApp:
             a = int(self.jug1_entry.get())
             b = int(self.jug2_entry.get())
             target = int(self.target_entry.get())
+            if (a < 0 or b < 0 or target > max(a, b))
+                self.update_output("Input invalid!")
+                return
         except ValueError:
             self.update_output("All inputs must be integers.")
             return
