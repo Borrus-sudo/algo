@@ -82,7 +82,9 @@ class GraphApp:
         raw = self.text.get("1.0", tk.END).strip().splitlines()
         for line in raw:
             parts = line.split()
-            if len(parts) == 2:
+            if len(parts) == 1:
+                G.add_node(parts[0])
+            elif len(parts) == 2:
                 u, v = parts
                 G.add_edge(u, v)
             elif len(parts) == 3:
