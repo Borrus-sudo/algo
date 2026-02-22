@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkinter import ttk
 import networkx as nx
@@ -68,101 +67,56 @@ class SearchSpace:
             self.gen_state_space((a + min(_a, b), b - min(_a, b)))
             self.edges.append(f"{a},{b} {a + min(_a, b)},{b - min(_a, b)}")
         
+    def is_goal(self, node):
+        a, b = map(int, node.split(","))
+        return a == self.target or b == self.target
+
+    def dfs(self, G, start="0,0"):
+        stack = [start]
+        parent = {start: None}
+        visited = set()
+        while stack:
+            u = stack.pop()
+            if u in visited:
+                continue
+
+            visited.add(u)
+
+            if self.is_goal(u):
+                return self._reconstruct_path(parent, u)
+
+            for v in G.successors(u):
+                if v not in visited:
+                    parent[v] = u
+                    stack.append(v)
+
+        return None
     
-    def dfs(self, curr = (0, 0)):
-        if (self.dfs_visited.get(curr) is not None):
-            return False
-        (a, b) = curr
-        self.dfs_visited[curr] = True
-        self.dfs_colors[f"{a},{b}"] = "Green"
-        if (a == self.target or b == self.target):
-            self.dfs_colors[f"{a},{b}"] = "Orange"
-            return True
-        (A, B) = (self.a, self.b)
-        (_a, _b) = (A - a, B - b) # Space left
-        
-        # Full jugs if not full
-        if (_a != 0):
-            res = self.dfs((A, b))
-            self.dfs_edges.append(f"{a},{b} {A},{b}")
-            if res: 
-                return True
-        if (_b != 0):
-            res = self.dfs((a, B))
-            self.dfs_edges.append(f"{a},{b} {a},{B}")
-            if res: 
-                return True
+    def bfs(self, G, start="0,0"):
+        q = deque([start])
+        parent = {start: None}
+        visited = {start}
 
-        # Empty jugs if not empty
-        if (a != 0):
-            res = self.dfs((0, b))
-            self.dfs_edges.append(f"{a},{b} {0},{b}")
-            if res: 
-                return True
+        while q:
+            u = q.popleft()
 
-        if (b != 0):
-            res = self.dfs((a, 0))
-            self.dfs_edges.append(f"{a},{b} {a},{0}")
-            if res: 
-                return True
+            if self.is_goal(u):
+                return self._reconstruct_path(parent, u)
 
-        # Transfer
-        if (a > 0 and _b > 0):  
-            res = self.dfs((a - min(a, _b), b + min(a, _b)))
-            self.dfs_edges.append(f"{a},{b} {a - min(a, _b)},{b + min(a, _b)}")
-            if res: 
-                return True
+            for v in G.successors(u):
+                if v not in visited:
+                    visited.add(v)
+                    parent[v] = u
+                    q.append(v)
 
-        if (b > 0 and _a > 0):
-            res = self.dfs((a + min(_a, b), b - min(_a, b)))
-            self.dfs_edges.append(f"{a},{b} {a + min(_a, b)},{b - min(_a, b)}")
-            if res: 
-                return True
-
-        return False
+        return None
     
-    def bfs(self, curr = (0, 0)):
-        q = deque([curr])
-
-        while len(q):
-            curr = q.popleft()   # pop front
-            if (self.bfs_visited.get(curr) is None):
-                (a, b) = curr
-                self.bfs_visited[curr] = True
-                self.bfs_colors[f"{a},{b}"] = "Green"
-                if (a == self.target or b == self.target):
-                    self.bfs_colors[f"{a},{b}"] = "Orange"
-                    break
-                (A, B) = (self.a, self.b)
-                (_a, _b) = (A - a, B - b) # Space left
-
-                # Full jugs if not full
-                if (_a != 0):
-                    q.append((A, b))
-                    self.bfs_edges.append(f"{a},{b} {A},{b}")
-
-                if (_b != 0):
-                    q.append((a, B))
-                    self.bfs_edges.append(f"{a},{b} {a},{B}")
-                
-                # Empty jugs if not empty
-                if (a != 0):
-                    q.append((0, b))
-                    self.bfs_edges.append(f"{a},{b} {0},{b}")
-
-                if (b != 0):
-                    q.append((a, 0))
-                    self.bfs_edges.append(f"{a},{b} {a},{0}")
-
-                # Transfer
-                if (a > 0 and _b > 0):
-                    q.append((a - min(a, _b), b + min(a, _b)))
-                    self.bfs_edges.append(f"{a},{b} {a - min(a, _b)},{b + min(a, _b)}")
-
-                if (b > 0 and _a > 0):
-                    q.append((a + min(_a, b), b - min(_a, b)))
-                    self.bfs_edges.append(f"{a},{b} {a + min(_a, b)},{b - min(_a, b)}")
-
+    def _reconstruct_path(self, parent, target):
+        path = []
+        while target is not None:
+            path.append(target)
+            target = parent[target]
+        return path[::-1]
 
 class GraphApp:
     def __init__(self, root):
@@ -221,7 +175,7 @@ class GraphApp:
             a = int(self.jug1_entry.get())
             b = int(self.jug2_entry.get())
             target = int(self.target_entry.get())
-            if (a < 0 or b < 0 or target > max(a, b))
+            if (a < 0 or b < 0 or target < 0 or target > max(a, b)):
                 self.update_output("Input invalid!")
                 return
         except ValueError:
@@ -240,38 +194,43 @@ class GraphApp:
         self.update_output("State space generated.")
 
     def perform_search(self):
-        if not self.search_space:
+        if not self.search_space or not self.G:
             self.update_output("Generate state space first.")
             return
-        
-        self.search_space.dfs_visited = {}
-        self.search_space.dfs_edges = []
-        self.search_space.dfs_colors = {}
-        
-        self.search_space.bfs_visited = {}
-        self.search_space.bfs_edges = []
-        self.search_space.bfs_colors = {}
         search_type = self.search_type.get()
-        colors = []
         if search_type == "dfs":
-            self.search_space.dfs()
-            self.update_output("\n".join(self.search_space.dfs_edges))
-            colors = [self.search_space.dfs_colors[n] if n in self.search_space.dfs_colors else "Blue" for n in self.G.nodes()]
+            path = self.search_space.dfs(self.G)
         else:
-            self.search_space.bfs()
-            self.update_output("\n".join(self.search_space.bfs_edges))
-            colors = [self.search_space.bfs_colors[n] if n in self.search_space.bfs_colors else "Blue" for n in self.G.nodes()]
-            
-        self.draw_graph(colors)
+            path = self.search_space.bfs(self.G)
 
-    def draw_graph(self, colors = "Blue"):
-        self.ax.clear()
-
-        if not self.G:
+        if not path:
+            self.update_output("No solution found.")
+            self.draw_graph()
             return
 
-        pos = nx.spring_layout(self.G, seed=42)
+        # Color nodes
+        node_colors = []
+        for n in self.G.nodes():
+            if n in path:
+                node_colors.append("Orange")
+            else:
+                node_colors.append("LightBlue")
 
+        # Color edges
+        path_edges = set(zip(path, path[1:]))
+        edge_colors = [
+            "Red" if (u, v) in path_edges else "Gray"
+            for u, v in self.G.edges()
+        ]
+
+        self.draw_graph(node_colors, edge_colors)
+        self.update_output(" -> ".join(path))
+
+    def draw_graph(self, node_colors="LightBlue", edge_colors="Gray"):
+        self.ax.clear()
+        if not self.G:
+            return
+        pos = nx.spring_layout(self.G, seed=42)
         nx.draw(
             self.G,
             pos,
@@ -280,9 +239,10 @@ class GraphApp:
             node_size=1500,
             font_size=9,
             arrows=True,
-            node_color=colors
+            node_color=node_colors,
+            edge_color=edge_colors,
+            width=2
         )
-
         self.canvas.draw()
 
     def update_output(self, text):
