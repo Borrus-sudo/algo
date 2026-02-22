@@ -107,7 +107,7 @@ class SearchSpace:
                 return True
 
         # Transfer
-        if (a > 0 and _b > 0):
+        if (a > 0 and _b > 0):  
             res = self.dfs((a - min(a, _b), b + min(a, _b)))
             self.dfs_edges.append(f"{a},{b} {a - min(a, _b)},{b + min(a, _b)}")
             if res: 
