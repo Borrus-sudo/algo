@@ -4,35 +4,23 @@
 using namespace std;
 
 using ll = long long;
-const int m = 1e9 + 7;
+const int INF = 1e9 + 7;
 
-int combo(int sum, vector<int> &dp)
-{
-    if (sum < 0)
-        return 0;
-    if (sum == 0)
-        return 1;
-    if (dp[sum] != -1)
-        return dp[sum];
-
-    int res = 0;
-    for (int i = 1; i <= 6; i++)
-    {
-        res = (res + combo(sum - i, dp)) % m;
-    }
-    return dp[sum] = res;
-}
-
-void solve()
-{
+void solve() {
     int n;
     cin >> n;
-    vector<int> cache(n + 1, -1);
-    cout << combo(n, cache);
+    vector<int> dp(n + 1);
+    dp[0] = 1;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= min(i, 6); j++) {
+            dp[i] += dp[i - j];
+            dp[i] %= INF;
+        }
+    }
+    cout << dp[n] << endl;
 }
 
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     cout.tie(nullptr);
