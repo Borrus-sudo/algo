@@ -158,7 +158,7 @@ class NQueenApp:
 
         nx.draw(
             G,
-            pos,
+            pos=pos,
             ax=self.ax,
             node_size=1500,
             node_color="lightblue",
