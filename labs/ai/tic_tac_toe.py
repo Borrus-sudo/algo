@@ -1,33 +1,66 @@
 import math
 import copy
+import networkx as nx
+from lib import Search
 
 
-class SearchAlgo:
-    def __init__(self, search_algo, gen, G, hashify=lambda x: x):
-        self.search = search_algo
-        self.gen = gen
-        self.G = G
-        self.hashify = hashify
-        pass
+class Minmax(Search):
+    def __init__(G=nx.DiGraph()):
+        super().__init__(G)
 
-    def attach_data(node, metadata):
-        pass
+    # shit show on the memory, a major one!
+    def generator(self, state):
+        board, curr = state
+        res = []
+        dim = len(board)
+        for row in range(dim):
+            for col in range(dim):
+                if board[row][col] is TicTacToe.VOID:
+                    # I can play a move?
+                    new_neighbour = copy.deepcopy(board)
+                    new_neighbour[row][col] = curr
+                    # if we have explored this before, we need to make sure that we use the cached, value!
+                    res.append(new_neighbour)
+        return res
 
-    def backtrack(node):
-        pass
+    # this is a total shit show on the memory
+    def search(self, state, alpha=-math.inf, beta=math.inf):
+        board, curr = state
+        # this stuff is not really good for perf, but it's fine ig
+        if TicTacToe.eval(board) == TicTacToe.P1:
+            return (1, board)
+        elif TicTacToe.eval(board) == TicTacToe.P2:
+            return (-1, board)
+        elif TicTacToe.eval(board) == TicTacToe.TIE:
+            return (0, board)
+        else:
+            if curr is TicTacToe.P1:
+                maxima = -math.inf
+                goto = None
+                for neighbour in self.generator(state):
+                    new_val, _ = self.search((neighbour, TicTacToe.P2), alpha, beta)
+                    alpha = max(alpha, new_val)
+                    if maxima < new_val:
+                        maxima = new_val
+                        goto = neighbour
+                    if beta <= alpha:
+                        break
+                return (maxima, goto)
+            else:
+                minima = math.inf
+                goto = None
+                for neighbour in self.generator(state):
+                    new_val, _ = self.search((neighbour, TicTacToe.P1), alpha, beta)
+                    beta = min(beta, new_val)
+                    if minima > new_val:
+                        minima = new_val
+                        goto = neighbour
+                    if beta <= alpha:
+                        break
+                return (minima, goto)
 
-    def see(node, label=None):
-        # add the node to graph
-        pass
-
-    def link(parent, child):
-        pass
-
-    def perform(self, start):
-        return self.search(
-            start,
-            self,
-        )
+    def hashify(self, node):
+        return "".join(["".join(row) for row in node])
 
 
 class TicTacToe:
@@ -104,59 +137,8 @@ class TicTacToe:
 
     @staticmethod
     def search(board, curr, G):
-
-        # shit show on the memory, a major one!
-        def minmax(start, tools):
-            board, curr = start
-            # this stuff is not really good for perf, but it's fine ig
-            if TicTacToe.eval(board) == TicTacToe.P1:
-                return (1, board)
-            elif TicTacToe.eval(board) == TicTacToe.P2:
-                return (-1, board)
-            elif TicTacToe.eval(board) == TicTacToe.TIE:
-                return (0, board)
-            else:
-                if curr is TicTacToe.P1:
-                    maxima = -math.inf
-                    goto = None
-                    for neighbour in tools.gen(start):
-                        new_val, _ = minmax((neighbour, TicTacToe.P2), tools)
-                        if maxima < new_val:
-                            maxima = new_val
-                            goto = neighbour
-                    return (maxima, goto)
-                else:
-                    minima = math.inf
-                    goto = None
-                    for neighbour in tools.gen(start):
-                        new_val, _ = minmax((neighbour, TicTacToe.P1), tools)
-                        if minima > new_val:
-                            minima = new_val
-                            goto = neighbour
-                    return (minima, goto)
-
-        # this is a total shit show on the memory
-        def gen(start):
-            board, curr = start
-            # curr is a board
-            res = []
-            dim = len(board)
-            for row in range(dim):
-                for col in range(dim):
-                    if board[row][col] is TicTacToe.VOID:
-                        # I can play a move?
-                        new_neighbour = copy.deepcopy(board)
-                        new_neighbour[row][col] = curr
-                        res.append(new_neighbour)
-            return res
-
-        ss = SearchAlgo(
-            minmax,
-            gen,
-            G,
-            hashify=lambda board: "".join(["".join(row) for row in board]),
-        )
-        return ss.perform((board, curr))
+        ss = Minmax()
+        return ss.search((board, curr))
 
     def __init__(self, dim=3):
         ## Game state
@@ -209,10 +191,18 @@ class TicTacToe:
         self.CURR = TicTacToe.P1
 
 
-if __name__ == "__main__":
-    board = TicTacToe()
-    while board.getGameState() is TicTacToe.ON_GOING:
+class Game:
+    def __init__(self):
+        pass
+
+    def gameloop(self):
+        board = TicTacToe()
+        while board.getGameState() is TicTacToe.ON_GOING:
+            print(board.board)
+            board.updateMove(board.generateNextMove(None))
         print(board.board)
-        board.updateMove(board.generateNextMove(None))
-    print(board.board)
-    print(board.getGameState())
+        print(board.getGameState())
+
+if __name__ == "__main__":
+    gg = Game()
+    gg.gameloop()
