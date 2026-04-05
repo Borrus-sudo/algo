@@ -6,7 +6,10 @@ class Search:
     def __init__(self, G):
         self.G = G
 
-    def add_node_meta(self, node, metadata):
+    def hashify(self, node):
+        return node
+
+    def info(self, node, metadata):
         for k, v in metadata.items():
             self.G.nodes[self.hashify(node)][k] = v
 
@@ -31,6 +34,3 @@ class Search:
             "arrows": True,
         }
         return args
-
-    def hashify(self, node):
-        return node
