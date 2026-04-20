@@ -51,6 +51,7 @@ class Wumpus:
             for rowPrime, colPrime in neighbours:
                 if self.board[rowPrime][colPrime] == self.UNKNOWN:
                     self.board[rowPrime][colPrime] = self.SAFE_TO_VISIT
+                    self.priority[rowPrime][colPrime] = len(self.getNeighbours((rowPrime, colPrime)))
 
         elif type == self.BREEZE:
 
@@ -67,6 +68,7 @@ class Wumpus:
                 for rowPrime, colPrime in neighbours:
                     if self.board[rowPrime][colPrime] == self.UNKNOWN:
                         self.board[rowPrime][colPrime] = self.SAFE_TO_VISIT
+                        self.priority[rowPrime][colPrime] = len(self.getNeighbours((rowPrime, colPrime)))
             elif len(unknowns) == 1:
                 self.tell(unknowns[0], self.PIT)
 
@@ -86,6 +88,10 @@ class Wumpus:
                 for rowPrime, colPrime in neighbours:
                     if self.board[rowPrime][colPrime] == self.UNKNOWN:
                         self.board[rowPrime][colPrime] = self.SAFE_TO_VISIT
+                        self.priority[rowPrime][colPrime] = len(
+                            self.getNeighbours((rowPrime, colPrime))
+                        )
+
             elif len(unknowns) == 1:
                 self.tell(unknowns[0], self.WUMPUS)
 
@@ -122,7 +128,6 @@ class Wumpus:
 
         known_squares.sort(key=lambda x: -self.priority[x[0]][x[1]])
         unknown_squares.sort(key=lambda x: -self.priority[x[0]][x[1]])
-        
 
         if len(known_squares):
             rR, rC = known_squares[0]
