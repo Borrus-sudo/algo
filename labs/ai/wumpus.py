@@ -2,6 +2,15 @@ import random
 import tkinter as tk
 import math
 
+"""
+The Wumpus Agent:
+    - tell method: Getting fed information about the world. It assumes the world is properly generated
+    - query method: Its a function that uses the current cell information and its neighbouring to make the next best move.
+                    It is not the job of the query to figure it is dead or won. The game engine would do that
+                    It is not possible for game configs where breeze and stench are together
+                    It is not possible to kill the wumpus. (Should not be too tough, if we know for a fact where the wumpus is)
+                    The agent is completely logical. The probaqbility is not being taken into account
+"""
 
 class Wumpus:
 
