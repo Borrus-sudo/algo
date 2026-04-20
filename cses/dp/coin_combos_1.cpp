@@ -43,7 +43,7 @@ void solve()
                 dp[i] += dp[i - coin];
                 dp[i] %= m;
             }
-        }x  
+        }  
     }
     cout << dp[x];
 }
