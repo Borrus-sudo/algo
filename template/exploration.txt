@@ -59,7 +59,7 @@ Problems:
 // Support a ModInt datatype
 // copy should be working well for other stuff
 // Figure out dbg to make it not lazy print so we can see output at end but dbg immediately
-// Support f and b for ranges
-// Change param names for uni, bi, poly
-// Better f and b names?
-// Sentinel for taking a 1 based input
+// Support f and b for ranges [Done]
+// Change param names for uni, bi, poly [Done]
+// Better f and b names? [Not needed]
+// Sentinel for taking a 1 based input [Done]

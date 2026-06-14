@@ -1,6 +1,9 @@
 #pragma region
 #include <bits/stdc++.h>
 
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
 #ifndef ONLINE_JUDGE
 #define endl "\n"
 #define dbg(...)                                                     \
@@ -14,12 +17,15 @@
 using namespace std;
 namespace rng = std::ranges;
 using namespace rng::views;
+using namespace __gnu_pbds;
 
 using ll = long long;
 using pi = pair<int, int>;
 using pll = pair<ll, ll>;
 template <typename T>
 using vec = vector<T>;
+template <typename T>
+using vec_skip = vector<T>;
 using vi = vec<int>;
 using vll = vec<ll>;
 using vvi = vec<vi>;
@@ -31,6 +37,7 @@ template <typename T>
 using minheap = priority_queue<T, vector<T>, std::greater<T>>;
 template <typename T>
 using maxheap = priority_queue<T>;
+using ordered_set = tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update>;
 const int INF = 1e9 + 7;
 
 template <typename>
@@ -62,7 +69,7 @@ void in(T& first, Types&... args) {
     if constexpr (is_pair_t<K>::value) {
         in(first.first);
         in(first.second);
-    } else if constexpr (is_vec_t<K>::value) {
+    } else if constexpr (is_vec_t<T>::value) {
         for (auto&& elem : first)
             in(elem);
     } else {
@@ -70,6 +77,14 @@ void in(T& first, Types&... args) {
     }
     if constexpr (sizeof...(args) > 0) {
         in(args...);
+    }
+}
+
+template <typename T>
+    requires std::ranges::range<T>
+void in(T first) {
+    for (auto& x : first) {
+        in(x);
     }
 }
 
@@ -142,45 +157,35 @@ void smin(S& a, const T& b) {
 }
 template <typename T>
     requires is_pair_t<remove_cvref_t<T>>::value || is_set_t<remove_cvref_t<T>>::value ||
-             is_vec_t<remove_cvref_t<T>>::value || is_tuple_t<remove_cvref_t<T>>::value
+             is_tuple_t<remove_cvref_t<T>>::value || std::ranges::range<T>
 auto f(T& container) {
     using K = remove_cvref_t<T>;
     if constexpr (is_pair_t<K>::value) {
         return container.first;
     } else if constexpr (is_set_t<K>::value) {
         return *(container.begin());
-    } else if constexpr (is_vec_t<K>::value) {
-        return container.front();
     } else if constexpr (is_tuple_t<K>::value) {
         return get<0>(container);
+    } else {
+        return container.front();
     }
 }
 
 template <typename T>
     requires is_pair_t<remove_cvref_t<T>>::value || is_set_t<remove_cvref_t<T>>::value ||
-             is_vec_t<remove_cvref_t<T>>::value || is_tuple_t<remove_cvref_t<T>>::value
+             is_tuple_t<remove_cvref_t<T>>::value || std::ranges::range<T>
 auto b(T& container) {
     using K = remove_cvref_t<T>;
     if constexpr (is_pair_t<K>::value) {
         return container.second;
     } else if constexpr (is_set_t<K>::value) {
         return *(container.rbegin());
-    } else if constexpr (is_vec_t<K>::value) {
-        return container.back();
     } else if constexpr (is_tuple_t<K>::value) {
         constexpr size_t N = std::tuple_size_v<K>;
         return get<N - 1>(container);
+    } else {
+        return container.back();
     }
-}
-
-unordered_map<str, int> _nextCache;
-template <typename T>
-T _nextElem(vec<T>& container, str&& identifier) {
-    int& next = _nextCache[identifier];
-    auto val = container[next];
-    next += 1;
-    next %= container.size();
-    return val;
 }
 
 #define int(...)     \
@@ -195,11 +200,11 @@ T _nextElem(vec<T>& container, str&& identifier) {
 #define pll(...)     \
     pll __VA_ARGS__; \
     in(__VA_ARGS__);
-#define vi(m, ...)                      \
-    vi m = move(vec<int>(__VA_ARGS__)); \
+#define vi(m, ...)     \
+    vi m(__VA_ARGS__); \
     in(m);
-#define vll(m, ...)                     \
-    vll m = move(vec<ll>(__VA_ARGS__)); \
+#define vll(m, ...)     \
+    vll m(__VA_ARGS__); \
     in(m);
 #define vvi(m, rows, cols) \
     vvi m(rows, vi(cols)); \
@@ -210,8 +215,8 @@ T _nextElem(vec<T>& container, str&& identifier) {
 #define str(s) \
     str s;     \
     in(s);
-#define vs(m, ...)                            \
-    vec<str> m = move(vec<str>(__VA_ARGS__)); \
+#define vs(m, ...)           \
+    vec<str> m(__VA_ARGS__); \
     in(m);
 #define ret(...)      \
     out(__VA_ARGS__); \
@@ -251,16 +256,10 @@ T _nextElem(vec<T>& container, str&& identifier) {
 #define iota rng::views::iota
 #define filterIdx(...) izip | filter(__VA_ARGS__) | transform(uni(b(a)))
 #define pb push_back
-#define next(container) _nextElem(container, #container)
 
-#define uni(...) [&](auto a) { return (__VA_ARGS__); }
-#define bi(...) [&](auto a, auto b) { return (__VA_ARGS__); }
+#define uni(...) [&](auto x) { return (__VA_ARGS__); }
+#define bi(...) [&](auto x, auto y) { return (__VA_ARGS__); }
 #define poly(...) [&](__VA_ARGS__)
-
-#define rep(i, len) for (int i = 0; i < len; i++)
-#define rrep(i, len) for (int i = len - 1; i >= 0; i--)
-#define citer(left, right) for (const auto& left : right)
-#define iter(left, right) for (auto& left : right)
 
 #pragma endregion
 
