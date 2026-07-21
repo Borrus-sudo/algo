@@ -1,0 +1,11 @@
+ID,Name,Age,Gender,Department,Marks,Attendance,City
+101,Alice,20,Female,CSE,85,92,Mumbai
+102,Bob,21,Male,IT,78,88,Pune
+103,Charlie,20,Male,CSE,,95,Nashik
+104,Diana,22,Female,ECE,67,,Mumbai
+105,Ethan,21,Male,IT,73,85,
+106,Fiona,20,Female,CSE,89,90,Nagpur
+107,George,,Male,ECE,60,75,Nashik
+108,Hannah,21,Female,IT,95,98,Mumbai
+109,Ian,23,Male,MECH,55,70,Pune
+110,Julia,20,Female,CSE,88,93,Nagpur
