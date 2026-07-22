@@ -63,29 +63,25 @@ struct is_tuple_t<tuple<Types...>> : true_type {};
 template <typename T>
 concept is_char_array_v = is_array_v<T> && is_same_v<remove_extent_t<T>, char>;
 
-template <typename T, typename... Types>
-void in(T& first, Types&... args) {
-    using K = remove_cvref_t<T>;
+template <typename T>
+void in(T&& x) {
+    using K = std::remove_cvref_t<T>;
     if constexpr (is_pair_t<K>::value) {
-        in(first.first);
-        in(first.second);
-    } else if constexpr (is_vec_t<T>::value) {
-        for (auto&& elem : first)
-            in(elem);
+        in(x.first);
+        in(x.second);
+    } else if constexpr (std::ranges::range<K> && !std::same_as<K, std::string>) {
+        for (auto&& e : x)
+            in(e);
     } else {
-        cin >> first;
-    }
-    if constexpr (sizeof...(args) > 0) {
-        in(args...);
+        std::cin >> x;
     }
 }
 
-template <typename T>
-    requires std::ranges::range<T>
-void in(T first) {
-    for (auto& x : first) {
-        in(x);
-    }
+template <typename T, typename... Ts>
+void in(T&& first, Ts&&... rest) {
+    in(std::forward<T>(first));
+    if constexpr (sizeof...(rest) > 0)
+        in(std::forward<Ts>(rest)...);
 }
 
 template <typename T, typename... Types>
